@@ -1,19 +1,19 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	name: "The Art Tree",
+	id: "ormc",
+	author: "akivn, the President of Origin Railway",
+	pointsName: "skill",
+	modFiles: ["layers/art.js", "layers/rein.js", "layers/chal.js", "layers/achievement.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	initialStartPoints: new Decimal (0), // Used for hard resets and new players
+	offlineLimit: 4,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "A0.1",
 	name: "Literally nothing",
 }
 
@@ -22,7 +22,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added things.<br>
 		- Added stuff.`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `Congratulations! You have became the new King of Guardians and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -42,7 +42,13 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(0.05)
+	gain = gain.times(tmp.art.effect)
+	gain = gain.times(tmp.rein.effect)
+	gain = gain.times(buyableEffect('art', 12))
+	if (hasUpgrade('art', 11)) gain = gain.times(upgradeEffect('art', 11))
+	if (hasUpgrade('art', 13)) gain = gain.times(upgradeEffect('art', 13))
+	if (inChallenge('chal', 21)) gain = gain.pow(0.5)
 	return gain
 }
 
@@ -56,7 +62,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return hasChallenge('chal', 31)
 }
 
 
