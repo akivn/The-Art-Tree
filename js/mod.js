@@ -3,7 +3,7 @@ let modInfo = {
 	id: "ormc",
 	author: "akivn, the President of Origin Railway",
 	pointsName: "skill",
-	modFiles: ["layers/art.js", "layers/rein.js", "layers/chal.js", "layers/achievement.js", "tree.js"],
+	modFiles: ["layers/art.js", "layers/rein.js", "layers/chal.js", "layers/inf.js", "layers/achievement.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -22,7 +22,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added things.<br>
 		- Added stuff.`
 
-let winText = `Congratulations! You have became the new King of Guardians and beaten this game, but for now...`
+let winText = `Congratulations! You have became the new King of Art and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -49,6 +49,8 @@ function getPointGen() {
 	if (hasUpgrade('art', 11)) gain = gain.times(upgradeEffect('art', 11))
 	if (hasUpgrade('art', 13)) gain = gain.times(upgradeEffect('art', 13))
 	if (inChallenge('chal', 21)) gain = gain.pow(0.5)
+	if (hasUpgrade('inf', 11)) gain = gain.times(upgradeEffect('inf', 11))
+	gain = softcap(gain, new Decimal('1e2000'), new Decimal(0.999).pow(player.points.log(10).div(100)))
 	return gain
 }
 
@@ -62,7 +64,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasChallenge('chal', 31)
+	return player.inf.points.gte(1e15)
 }
 
 

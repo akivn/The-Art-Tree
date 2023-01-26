@@ -8,7 +8,7 @@ addLayer("chal", {
     }},
     color: "#990000",
     requires: new Decimal(1e23), // Can be a function that takes requirement increases into account
-    resource: "Reducers", // Name of prestige currency
+    resource: "Magics", // Name of prestige currency
     baseResource: "Art Points", // Name of resource prestige is based on
     baseAmount() {return player.art.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
@@ -22,11 +22,15 @@ addLayer("chal", {
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "c", description: "C: Reset for Reducers", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "c", description: "C: Reset for Magics", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     effect() {
         let effect = player[this.layer].points.add(2).log(2)
         if (hasUpgrade('art', 41)) effect = effect.times(upgradeEffect('art', 41))
+        if (hasUpgrade('art', 43)) effect = player[this.layer].points.add(1).pow(0.07)
+        if (hasAchievement('ac', 125)) effect = effect.times(1.2)
+        if (hasAchievement('ac', 133)) effect = effect.pow(1.01)
+        if (hasUpgrade('inf', 13)) effect = effect.pow(1.5)
         return effect
     },
     effectDescription(){
@@ -62,7 +66,7 @@ addLayer("chal", {
         },
         22: {
             name: "Hotori Tadase",
-            challengeDescription: "King of the Guardians, and he likes being a king (kek). Reincaranation boost is always x1, apart from the Reducer boost, which will be squared.",
+            challengeDescription: "King of the Guardians, and he likes being a king (kek). Reincaranation boost is always x1, apart from the Magic boost, which will be squared.",
             rewardDescription: "Unlock 2 new Art upgrades, and the effect of Reincaranation is squared.",
             goalDescription: "6.66e66 Art Points",
             canComplete: function() {
@@ -71,8 +75,8 @@ addLayer("chal", {
         },
         31: {
             name: "Hinamori Amu",
-            challengeDescription: "Joker of the Guardians, COOL AND SPICY. She 'loves' Art, and has a Shugo Chara called Miki, who is also proficient at arts. Art Machines are useless, and Reincaranation boost is always x1, apart from the Reducer boost.",
-            rewardDescription: "Beat the game.",
+            challengeDescription: "Joker of the Guardians, COOL AND SPICY. She 'loves' Art, and has a Shugo Chara called Miki, who is also proficient at arts. Art Machines are useless, and Reincaranation boost is always x1, apart from the Magic boost.",
+            rewardDescription: "Unlock 3 more new upgrades.",
             goalDescription: "1.9940924e32 Art Points",
             canComplete: function() {
                 return player.art.points.gte(1.9940924e32)
@@ -80,7 +84,7 @@ addLayer("chal", {
         },
     },
 
-    layerShown(){return hasUpgrade('art', 34) || player[this.layer].points.gte(1)},
+    layerShown(){return hasUpgrade('art', 34) || player[this.layer].points.gte(1) || player.inf.best.gte(1)},
     tabFormat: {
         "Main": {
             content: [
@@ -91,5 +95,12 @@ addLayer("chal", {
         },
         
     },
-
+    passiveGeneration() {
+        return hasMilestone("rein", 5) ? 1:0
+        },
+    doReset(resettingLayer) {
+        let keep = []
+        if (hasMilestone("inf", 2)) keep.push("challenges")
+        if (layers[resettingLayer].row > this.row) layerDataReset("chal", keep)
+    },
 })

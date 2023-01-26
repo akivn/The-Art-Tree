@@ -168,6 +168,7 @@ function addPoints(layer, gain) {
 	if (player[layer].total) player[layer].total = player[layer].total.add(gain)
 }
 
+
 function generatePoints(layer, diff) {
 	addPoints(layer, tmp[layer].resetGain.times(diff))
 }
