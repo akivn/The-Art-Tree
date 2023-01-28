@@ -3,7 +3,7 @@ let modInfo = {
 	id: "ormc",
 	author: "akivn, the President of Origin Railway",
 	pointsName: "skill",
-	modFiles: ["layers/art.js", "layers/rein.js", "layers/chal.js", "layers/inf.js", "layers/achievement.js", "tree.js"],
+	modFiles: ["layers/art.js", "layers/rein.js", "layers/ipow.js", "layers/eter.js", "layers/srein.js", "layers/chal.js", "layers/schal.js", "layers/inf.js", "layers/achievement.js", "tree.js"],
 
 	discordName: "neuro sama your reality (X)",
 	discordLink: "https://discord.gg/h6TFgujqtN",
@@ -13,12 +13,19 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "A0.11",
-	name: "Infinity Update 1",
+	num: "A0.3",
+	name: "INFINITY^INFINITY",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
+	<h3>v0.3</h3><br>
+		- Added 4 new prestige layers!<br>
+		- Reincaranation upgrades!<br>
+		- 2 new Infinity Upgrades!<br>
+		- 6 new Challenges!<br>
+		- 17 new Achievements!<br>
+		- Endgame increased to 1 ???.<br>
+	<h3>v0.2</h3><br>
 		- Added Infinity!<br>
 		- Reach 1.797e308 Art Points to prestige for Infinity points, and use it in Generators which generates Reincaranations, or in upgrades!<br>
 		- Endgame increased to 1e15 Infinity Points.`
@@ -43,15 +50,16 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(0.05)
+	let gain = new Decimal(0.15)
 	gain = gain.times(tmp.art.effect)
 	gain = gain.times(tmp.rein.effect)
 	gain = gain.times(buyableEffect('art', 12))
 	if (hasUpgrade('art', 11)) gain = gain.times(upgradeEffect('art', 11))
 	if (hasUpgrade('art', 13)) gain = gain.times(upgradeEffect('art', 13))
-	if (inChallenge('chal', 21)) gain = gain.pow(0.5)
+	if (inChallenge('chal', 21) || inChallenge('schal', 31)) gain = gain.pow(0.5)
 	if (hasUpgrade('inf', 11)) gain = gain.times(upgradeEffect('inf', 11))
-	gain = softcap(gain, new Decimal('1e2000'), new Decimal(0.999).pow(player.points.log(10).div(100)))
+	if (hasUpgrade('art', 35)) gain = gain.times(upgradeEffect('art', 35))
+	gain = softcap(gain, new Decimal('1e2000'), new Decimal(0.999).pow(player.points.add(1).log(10).div(100)))
 	return gain
 }
 
@@ -65,7 +73,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.inf.points.gte(1e15)
+	return player.eter.points.gte(1)
 }
 
 

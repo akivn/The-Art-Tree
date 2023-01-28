@@ -198,6 +198,16 @@ addLayer("ac", {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
+        144: {
+            name: "Half a 9000",
+            tooltip: "Gain 1e4500 Skills.",
+            done() {
+                return player.points.gte('1e4500')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
         142: {
             name: "Get rid of all gods",
             tooltip: "Reach 1e480 Skill and Art Points in Hinamori Amu Challenge.\n\ Reward: Infinite Generator 1 is 50% stronger.",
@@ -209,6 +219,20 @@ addLayer("ac", {
             },
             achievementEffect() {
                 let effect = new Decimal(0.5)
+                return effect
+            },
+        },
+        145: {
+            name: "Denying everything",
+            tooltip: "Reach 1e850 Skill and Art Points in Fujisaki Nadeshiko Challenge.\n\ Reward: Extra +^0.1 boost to Art Machine 3's effect.",
+            done() {
+                return player.points.gte('1e850') && inChallenge('chal', 21)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+            achievementEffect() {
+                let effect = new Decimal(0.1)
                 return effect
             },
         },
@@ -224,6 +248,160 @@ addLayer("ac", {
             achievementEffect() {
                 let effect = new Decimal(0.05)
                 return effect
+            },
+        },
+        151: {
+            name: "Reincaranation of Reincaranations",
+            tooltip: "Perform a Super-Reincaranation.",
+            done() {
+                return player.srein.points.gte(1)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        152: {
+            name: "Yet an ogol Reference",
+            tooltip: "Reach 1e50 Infinity Points.",
+            done() {
+                return player.inf.points.gte(1e50)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        153: {
+            name: "Stronger than a Magic^10",
+            tooltip: "Get 1e3080 Magic.\n\ Reward: Another 1e10x boost to Magic Effect.",
+            done() {
+                return player.chal.points.gte('1e3080')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        154: {
+            name: "THIS ACHIEVEMENT DOESN'T EXIST",
+            tooltip: "Get 9.999e9999 Skill.\n\ Reward: Super-Reincaranation boost is +^0.02 stronger.",
+            done() {
+                return player.points.gte('9.999e9999')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        155: {
+            name: "ITS OVER 9000",
+            tooltip: "Get 1e9000 Art Points in Yuiki Yaya Challenge.\n\ Reward: Additional +^0.02 boost for Infinity Power boost.",
+            done() {
+                return player.art.points.gte('1e9000') && inChallenge('chal', 11)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        161: {
+            name: "Real Artists",
+            tooltip: "Beat a Super-Competition Challenge.",
+            done() {
+                return hasChallenge('schal', 11)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        162: {
+            name: "Alright Angel Number for progress",
+            tooltip: "Get 4.44e13 Reincaranations.",
+            done() {
+                return player.rein.points.gte(4.44e13)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        163: {
+            name: "Now this is what I call 'Cool and Spicy'",
+            tooltip: "Get 1e12,756 skill in Hinamori Amu Challenge. \n\ Reward: Boost the base reincaranation effect by 10,000x (before any additional powers)",
+            done() {
+                return player.points.gte('1e12756') && inChallenge('chal', 31)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        171: {
+            name: "Now that's what I'm talking about.",
+            tooltip: "Get 1e12,000 Magic. \n\ Reward: The boost from Super-Magic is 1.5x stronger.",
+            done() {
+                return player.chal.points.gte('1e12000')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        164: {
+            name: "ERROR 666: DEVIL DOES NOT EXIST",
+            tooltip: "Get 6.66e666x multiplier from Art Machine 4. \n\ Reward: Gain 1e150x more Magic.",
+            done() {
+                return buyableEffect('art', 21).gte('6.66e666')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        172: {
+            name: "Denying EVERYTHING!!!",
+            tooltip: "Reach 9.99e19999 Skill in Fujisaki Nadeshiko Challenge while inside Vermeer Challenge.\n\ Reward: IG1 Produces 10% more Reincaranations.",
+            done() {
+                return player.points.gte('9.99e19999') && inChallenge('chal', 21) && inChallenge('schal', 21)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+            achievementEffect() {
+                let effect = new Decimal(0.1)
+                return effect
+            },
+        },
+        165: {
+            name: "THIS ACHIEVEMENT DOESN'T EXIST II",
+            tooltip: "Get 9.9999e999 IP.\n\ Reward: Infinity Power boost is 2% stronger.",
+            done() {
+                return player.inf.points.gte('9.999e999')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        173: {
+            name: "Incredible work",
+            tooltip: "Have your AP surpassing your skill amount with over 1e50,000 of them.\n\ Reward: Art Machine 6 uses a better formula.",
+            done() {
+                return player.points.gte('1e50000') && player.art.points.gte(player.points)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        174: {
+            name: "I don't have enough fuel!",
+            tooltip: "Maxout all 4 Infinite Generator (999 each)",
+            done() {
+                return getBuyableAmount('inf', 11).gte(999) && getBuyableAmount('inf', 12).gte(999) && getBuyableAmount('inf', 21).gte(999) && getBuyableAmount('inf', 22).gte(999)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        175: {
+            name: "IT'S REALLY OVER 9000",
+            tooltip: "Reach 1e90000 Art Points.",
+            done() {
+                return player.art.best.gte('1e90000')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
             },
         },
     },

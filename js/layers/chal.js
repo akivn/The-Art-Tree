@@ -6,6 +6,11 @@ addLayer("chal", {
         unlocked: false,
 		points: new Decimal(0),
     }},
+    branches: [
+        ["schal", function() { return player.schal.best.gte(1) ? "#ffffff" : "#505050" }, 20],
+
+
+	],
     color: "#990000",
     requires: new Decimal(1e23), // Can be a function that takes requirement increases into account
     resource: "Magics", // Name of prestige currency
@@ -15,10 +20,13 @@ addLayer("chal", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasAchievement('ac', 164)) mult = mult.times(1e150)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        let pow = new Decimal(1)
+        if (inChallenge('schal', 21)) pow = new Decimal(0.25)
+        return pow
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -31,6 +39,11 @@ addLayer("chal", {
         if (hasAchievement('ac', 125)) effect = effect.times(1.2)
         if (hasAchievement('ac', 133)) effect = effect.pow(1.01)
         if (hasUpgrade('inf', 13)) effect = effect.pow(1.5)
+        if (hasAchievement('ac', 153)) effect = effect.times(1e10)
+        if (inChallenge('schal', 12)) power = new Decimal(1)
+        if (hasUpgrade('rein', 22)) effect = effect.pow(1.14)
+        effect = effect.pow(tmp.schal.effect)
+        if (inChallenge('schal', 32)) power = new Decimal(1)
         return effect
     },
     effectDescription(){
@@ -84,7 +97,7 @@ addLayer("chal", {
         },
     },
 
-    layerShown(){return hasUpgrade('art', 34) || player[this.layer].points.gte(1) || player.inf.best.gte(1)},
+    layerShown(){return hasUpgrade('art', 34) || player[this.layer].points.gte(1) || player.inf.best.gte(1) || player.eter.best.gte(1)},
     tabFormat: {
         "Main": {
             content: [

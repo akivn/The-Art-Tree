@@ -1,13 +1,19 @@
 addLayer("inf", {
     name: "Infinity", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "∞", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
 		points: new Decimal(0),
         power: new Decimal(0),
         auto: true
     }},
+    branches: [
+        ["ipow", function() { return player.ipow.best.gte(1) ? "#ffffff" : "#505050" }, 20],
+        ["eter", function() { return player.ipow.best.gte(1) ? "#ffffff" : "#505050" }, 20],
+
+
+	],
     color: "#FF9852",
     requires: new Decimal(2).pow(1024), // Can be a function that takes requirement increases into account
     resource: "Infinity Points", // Name of prestige currency
@@ -17,18 +23,26 @@ addLayer("inf", {
     exponent: 0.008, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasUpgrade('art', 45)) mult = mult.times(upgradeEffect('art', 45))
+        if (hasUpgrade('rein', 13)) mult = mult.times(upgradeEffect('rein', 13))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        pow = new Decimal(1).times(tmp.ipow.effect)
+        return pow
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "i", description: "I: Reset for Infinity Points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "I", description: "Shift+I: Reset for Infinity Powers", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     update() {
         let gain = buyableEffect('inf', 11)
+        if (inChallenge('schal', 21)) gain = gain.pow(0.25)
+        if (hasAchievement('ac', 172)) gain = gain.times(1.1)
+        if (hasChallenge('schal', 21)) gain = gain.times(challengeEffect('schal', 21))
+        if (inChallenge('schal', 22) && gain.gte(1)) gain = new Decimal(1)
         addPoints('rein', gain.div(20))
+        if (hasChallenge('schal', 32)) addPoints('srein', challengeEffect('schal', 32).div(20))
     },
     upgrades:{
         11: {
@@ -40,6 +54,9 @@ addLayer("inf", {
             currencyLayer: "art",
             effect() {
                 let power = Decimal.pow(player.inf.points.add(1), 7)
+                power = power.pow(buyableEffect('art', 22))
+                if (inChallenge('schal', 12)) power = new Decimal(1)
+                if (inChallenge('schal', 32)) power = new Decimal(1)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -73,6 +90,8 @@ addLayer("inf", {
             cost: new Decimal(2.5e7),
             effect() {
                 let power = new Decimal(0.00025).times(player.points.add(1).log(1e10))
+                if (power.gte(0.2)) power = new Decimal(0.2)
+                if (inChallenge('schal', 32)) power = new Decimal(1)
                 return power
             },
             effectDisplay() { return "+^" + format(upgradeEffect(this.layer, this.id))},
@@ -96,6 +115,22 @@ addLayer("inf", {
                 return (hasUpgrade('inf', 13))
             },
         },
+        24: {
+            title: "Power-Up!",
+            description: "Unlock Infinity Power.",
+            cost: new Decimal(1e20),
+            unlocked(){
+                return (hasUpgrade('inf', 13))
+            },
+        },
+        25: {
+            title: "RETURN OF BASICS",
+            description: "Unlock 8 new Art Upgrades",
+            cost: new Decimal(1e40),
+            unlocked(){
+                return (hasUpgrade('inf', 24))
+            },
+        },
     },
     milestones: {
         0: {requirementDescription: "27 Infinity Points",
@@ -110,15 +145,26 @@ addLayer("inf", {
         },
         2: {requirementDescription: "225 Infinity Points",
             done() {return player[this.layer].best.gte(225)}, // Used to determine when to give the milestone
-            effectDescription: "Keep all competitions and Rein. Milestones when Infinitying.",
+            effectDescription: "Keep all competitions and Rein. Milestones when performing a Row-3 Reset.",
 
         },
         3: {requirementDescription: "1e10 Infinity Points",
             done() {return player[this.layer].best.gte(1e10)}, // Used to determine when to give the milestone
-            effectDescription: "Unlock infinite generator autobuyer.",
+            effectDescription: "Unlock infinite generators 1/2 autobuyer.",
             toggles: [
                 ["inf", "auto"]
             ],
+        },
+        4: {requirementDescription: "1e225 Infinity Points",
+            done() {return player[this.layer].best.gte(1e225)}, // Used to determine when to give the milestone
+            effectDescription: "Unlock infinite generators 3/4 autobuyer.",
+        },
+        5: {requirementDescription: "9.99e1999 Infinity Points",
+            done() {return player[this.layer].best.gte('9.99e1999')}, // Used to determine when to give the milestone
+            effectDescription: "Unlock Art Machine 6 Autobuyer.",
+            unlocked(){
+                return hasChallenge('schal', 11)
+            }
         },
     },
     buyables: {
@@ -132,15 +178,19 @@ addLayer("inf", {
                 let power = new Decimal(1).add(-1).add(new Decimal(1).times(getBuyableAmount('inf', 11)))
                 power = power.times(buyableEffect('inf', 12))
                 if (hasAchievement('ac', 142)) power = power.times(1.5)
+                if (hasUpgrade('rein', 11)) power = power.times(upgradeEffect('rein', 11))
+                if (hasAchievement('ac', 172)) power = power.times(1.1)
+                if (hasUpgrade('rein', 21)) power = power.times(upgradeEffect('rein', 21))
+                if (hasUpgrade('rein', 23)) power = power.times(2)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
                 let sent = "Cost: " + format(data.cost) + " Infinity points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/999\n\
                 Generating " + format(buyableEffect(this.layer, this.id)) + " Reincaranations per second"
                 return sent
             },
-            canAfford() { return player[this.layer].points.gte(this.cost())},
+            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('inf', 11) < 999},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -159,15 +209,16 @@ addLayer("inf", {
             effect(x){
                 let power = new Decimal(1).add(new Decimal(2).times(getBuyableAmount('inf', 12)))
                 power = power.times(buyableEffect('inf', 21))
+                if (hasUpgrade('rein', 23)) power = power.times(2)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
                 let sent = "Cost: " + format(data.cost) + " Infinity points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/999\n\
                 Boosting IG1 by x" + format(buyableEffect(this.layer, this.id))
                 return sent
             },
-            canAfford() { return player[this.layer].points.gte(this.cost())},
+            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('inf', 12) < 999},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -185,15 +236,44 @@ addLayer("inf", {
             },
             effect(x){
                 let power = new Decimal(1).add(new Decimal(3).times(getBuyableAmount('inf', 21)))
+                power = power.times(buyableEffect('inf', 22))
+                if (hasUpgrade('rein', 23)) power = power.times(2)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
                 let sent = "Cost: " + format(data.cost) + " Infinity points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/999\n\
                 Boosting IG2 by x" + format(buyableEffect(this.layer, this.id))
                 return sent
             },
-            canAfford() { return player[this.layer].points.gte(this.cost())},
+            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('inf', 21) < 999},
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked(){
+                return (hasUpgrade('inf', 23))
+            },
+
+        },
+        22: {
+            title: "Infinite Generator 4",
+            cost(x) { 
+                let cost = new Decimal(1e75).times(new Decimal(100).pow(x))
+                return cost 
+            },
+            effect(x){
+                let power = new Decimal(1).add(new Decimal(5).times(getBuyableAmount('inf', 22)))
+                if (hasUpgrade('rein', 23)) power = power.times(2)
+                return power
+            },
+            display() { let data = tmp[this.layer].buyables[this.id]
+                let sent = "Cost: " + format(data.cost) + " Infinity points\n\
+                Amount: " + player[this.layer].buyables[this.id] + "/999\n\
+                Boosting IG3 by x" + format(buyableEffect(this.layer, this.id))
+                return sent
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('inf', 22) < 999},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -205,7 +285,7 @@ addLayer("inf", {
         },
     },
 
-    layerShown(){return hasUpgrade('art', 51) || player.inf.best.gte(1)},
+    layerShown(){return hasUpgrade('art', 51) || player.inf.best.gte(1) || player.eter.best.gte(1)},
     tabFormat: {
         "Main": {
             content: [
@@ -232,6 +312,10 @@ addLayer("inf", {
         if (hasMilestone('inf', 3) && player[this.layer].auto ) {
             buyBuyable('inf', 11)
             buyBuyable('inf', 12)
+        }
+        if (hasMilestone('inf', 4) && player[this.layer].auto ) {
+            buyBuyable('inf', 21)
+            buyBuyable('inf', 22)
         }
     },
     passiveGeneration() {
