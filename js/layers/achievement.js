@@ -12,7 +12,14 @@ addLayer("ac", {
     baseResource: "points",                
     baseAmount() { return player.points },  
 
-    requires: new Decimal(0),              
+    requires: new Decimal(0),    
+    effect() {
+        let effect = Decimal.max(new Decimal(1), new Decimal(1.075).pow(player[this.layer].points))
+        return effect
+    },
+    effectDescription(){
+        return "boosting skill gain by x" + format(tmp[this.layer].effect)        
+    },          
 
     type: "none",                                                
 
@@ -22,7 +29,7 @@ addLayer("ac", {
             name: "Start",
             tooltip: "Get 1 Art Point.",
             done() {
-                return player.points.gte(1)
+                return player.art.points.gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -40,7 +47,7 @@ addLayer("ac", {
         },
         113: {
             name: "Rebirth",
-            tooltip: "Reincaranate once.",
+            tooltip: "Reincarnate once.",
             done() {
                 return player.rein.points.gte(1)
             },
@@ -52,17 +59,17 @@ addLayer("ac", {
             name: "Formula Broken!",
             tooltip: "Maxout Art Machine 1.",
             done() {
-                return getBuyableAmount('art', 11).gte(60)
+                return getBuyableAmount('art', 11).gte(20)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         115: {
-            name: "Entering Seiyo Elementary",
-            tooltip: "Unlock Competitions.",
+            name: "Full House",
+            tooltip: "Buy 12 Art Upgrades.",
             done() {
-                return player.chal.points.gte(1)
+                return hasUpgrade('art', 34)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -89,10 +96,10 @@ addLayer("ac", {
             }
         },
         123: {
-            name: "Mopemope",
-            tooltip: "Beat Fujisaki Nadeshiko.",
+            name: "To Infinity!",
+            tooltip: "Reach infinite skill.",
             done() {
-                return hasChallenge('chal', 21)
+                return player.points.gte('1.79e308')
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -124,7 +131,7 @@ addLayer("ac", {
         },
         131: {
             name: "Big Crunch",
-            tooltip: "Infinity once. Reward: The boost by Reincaranations are raised to the power of ^1.01.",
+            tooltip: "Infinity once. Reward: The boost by Reincarnations are raised to the power of ^1.01.",
             done() {
                 return player.inf.best.gte(1)
             },
@@ -180,7 +187,7 @@ addLayer("ac", {
         },
         135: {
             name: "Rebirth Madness",
-            tooltip: "Reach 1000 Reincaranations.",
+            tooltip: "Reach 1000 Reincarnations.",
             done() {
                 return player.rein.points.gte(1000)
             },
@@ -238,7 +245,7 @@ addLayer("ac", {
         },
         143: {
             name: "Rebirth Madness II",
-            tooltip: "Reach 1,000,000 Reincaranations. \n\ Reward: Art Machine 3 is 5% stronger.",
+            tooltip: "Reach 1,000,000 Reincarnations. \n\ Reward: Art Machine 3 is 5% stronger.",
             done() {
                 return player.rein.points.gte(1000000)
             },
@@ -251,8 +258,8 @@ addLayer("ac", {
             },
         },
         151: {
-            name: "Reincaranation of Reincaranations",
-            tooltip: "Perform a Super-Reincaranation.",
+            name: "Reincarnation of Reincarnations",
+            tooltip: "Perform a Super-Reincarnation.",
             done() {
                 return player.srein.points.gte(1)
             },
@@ -261,7 +268,7 @@ addLayer("ac", {
             },
         },
         152: {
-            name: "Yet an ogol Reference",
+            name: "Yet an gogol Reference",
             tooltip: "Reach 1e50 Infinity Points.",
             done() {
                 return player.inf.points.gte(1e50)
@@ -282,7 +289,7 @@ addLayer("ac", {
         },
         154: {
             name: "THIS ACHIEVEMENT DOESN'T EXIST",
-            tooltip: "Get 9.999e9999 Skill.\n\ Reward: Super-Reincaranation boost is +^0.02 stronger.",
+            tooltip: "Get 9.999e9999 Skill.\n\ Reward: Super-Reincarnation boost is +^0.02 stronger.",
             done() {
                 return player.points.gte('9.999e9999')
             },
@@ -312,7 +319,7 @@ addLayer("ac", {
         },
         162: {
             name: "Alright Angel Number for progress",
-            tooltip: "Get 4.44e13 Reincaranations.",
+            tooltip: "Get 4.44e13 Reincarnations.",
             done() {
                 return player.rein.points.gte(4.44e13)
             },
@@ -321,10 +328,10 @@ addLayer("ac", {
             },
         },
         163: {
-            name: "Now this is what I call 'Cool and Spicy'",
-            tooltip: "Get 1e12,756 skill in Hinamori Amu Challenge. \n\ Reward: Boost the base reincaranation effect by 10,000x (before any additional powers)",
+            name: "Now this is what I call 'Cool and Spicy' x1.1136",
+            tooltip: "Get 1e14,200 skill in Hinamori Amu Challenge. \n\ Reward: Boost the base reincarnation effect by 40,000x (before any additional powers)",
             done() {
-                return player.points.gte('1e12756') && inChallenge('chal', 31)
+                return player.points.gte('1e14200') && inChallenge('chal', 31)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -352,9 +359,9 @@ addLayer("ac", {
         },
         172: {
             name: "Denying EVERYTHING!!!",
-            tooltip: "Reach 9.99e19999 Skill in Fujisaki Nadeshiko Challenge while inside Vermeer Challenge.\n\ Reward: IG1 Produces 10% more Reincaranations.",
+            tooltip: "Reach 1e18000 Skill in Fujisaki Nadeshiko Challenge while inside Vermeer Challenge.\n\ Reward: IG1 Produces 10% more Reincarnations.",
             done() {
-                return player.points.gte('9.99e19999') && inChallenge('chal', 21) && inChallenge('schal', 21)
+                return player.points.gte('1e18000') && inChallenge('chal', 21) && inChallenge('schal', 21)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -399,6 +406,36 @@ addLayer("ac", {
             tooltip: "Reach 1e90000 Art Points.",
             done() {
                 return player.art.best.gte('1e90000')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        181: {
+            name: "Nadeshiko is relative.",
+            tooltip: "Go Eternal.",
+            done() {
+                return player.eter.best.gte(1)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        182: {
+            name: "Incredible.",
+            tooltip: "Finish Yuiki Yaya Challenge with no Art Points. (Must be after Eternity due to a bug)\n\ Reward: Get a respec upgrades button for Art Upgrades for more achievements.",
+            done() {
+                return hasChallenge('chal', 11) && player.art.points.lt(1) && player.eter.points.gte(1)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            },
+        },
+        183: {
+            name: "この実績は存在しない3",
+            tooltip: "Get 9.999e99999 Skill.\n\ Reward: Additional 1% boost to Magic Effect.",
+            done() {
+                return player.points.gte('9.999e99999')
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)

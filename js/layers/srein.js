@@ -1,5 +1,5 @@
 addLayer("srein", {
-    name: "Super-Reincaranation", // This is optional, only used in a few places, If absent it just uses the layer id.
+    name: "Super-Reincarnation", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "SR", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -8,8 +8,8 @@ addLayer("srein", {
     }},
     color: "#FFA882",
     requires: new Decimal(1e6), // Can be a function that takes requirement increases into account
-    resource: "Super-Reincaranations", // Name of prestige currency
-    baseResource: "Reincaranations", // Name of resource prestige is based on
+    resource: "Super-Reincarnations", // Name of prestige currency
+    baseResource: "Reincarnations", // Name of resource prestige is based on
     baseAmount() {return player.rein.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 4, // Prestige currency exponent
@@ -27,7 +27,7 @@ addLayer("srein", {
     ],
     effect() {
         let effect = Decimal.max(new Decimal(1), new Decimal(1.1).pow(player[this.layer].points))
-        if (hasUpgrade('art', 25)) effect = Decimal.max(new Decimal(1), new Decimal(1.14).pow(player[this.layer].points))
+        if (hasUpgrade('art', 25)) effect = Decimal.max(new Decimal(1), new Decimal(1.169).pow(player[this.layer].points))
         if (hasAchievement('ac', 154)) effect = effect.add(0.02)
         if (inChallenge('schal', 11)) effect = new Decimal(1)
         if (hasUpgrade('rein', 12)) effect = Decimal.max(new Decimal(1), new Decimal(upgradeEffect('rein', 12)).pow(player[this.layer].points))
@@ -35,7 +35,7 @@ addLayer("srein", {
         return effect
     },
     effectDescription(){
-        return "boosting reincaranation boost effect by ^" + format(tmp[this.layer].effect)        
+        return "boosting reincarnation boost effect by ^" + format(tmp[this.layer].effect)        
     },
     milestones: {
     

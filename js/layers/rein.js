@@ -1,5 +1,5 @@
 addLayer("rein", {
-    name: "Reincaranation", // This is optional, only used in a few places, If absent it just uses the layer id.
+    name: "Reincarnation", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
@@ -12,12 +12,12 @@ addLayer("rein", {
 
 	],
     color: "#F5CCA0",
-    requires: new Decimal(2.22222e5), // Can be a function that takes requirement increases into account
-    resource: "Reincaranations", // Name of prestige currency
+    requires: new Decimal(3e8), // Can be a function that takes requirement increases into account
+    resource: "Reincarnations", // Name of prestige currency
     baseResource: "Art Points", // Name of resource prestige is based on
     baseAmount() {return player.art.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 1.65, // Prestige currency exponent
+    exponent: 2.04, // Prestige currency exponent
     softcap: new Decimal(100),
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
@@ -31,9 +31,9 @@ addLayer("rein", {
         {key: "r", description: "R: Reset for 'Reins", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     effect() {
-        let effect = Decimal.max(new Decimal(1), (player[this.layer].points.add(1)).pow(1.6))
-        if (hasAchievement('ac', 163)) effect = effect.times(10000)
-        if (hasUpgrade('inf', 12)) effect = Decimal.max(new Decimal(1), new Decimal(10).pow(player[this.layer].points.add(1).log(1.1)))
+        let effect = Decimal.max(new Decimal(1), (player[this.layer].points.add(1)).pow(1.8))
+        if (hasAchievement('ac', 163)) effect = effect.times(40000)
+        if (hasUpgrade('inf', 12)) effect = Decimal.max(new Decimal(1), new Decimal(10).pow(player[this.layer].points.add(1).log(1.21)))
         if (hasUpgrade('art', 33)) effect = effect.times(3)
         effect = effect.times(tmp.chal.effect)
         effect = effect.pow(buyableEffect('art', 13))
@@ -45,7 +45,7 @@ addLayer("rein", {
         if (hasAchievement('ac', 131)) effect = effect.pow(1.01)
         effect = softcap(effect, new Decimal(1e50), new Decimal(1).div(effect.add(10).log(10).log(10).div(0.6)))
         effect = effect.pow(tmp.srein.effect)
-        if (hasUpgrade('schal', 22)) effect = effect.pow(1.35)
+        if (hasUpgrade('schal', 22)) effect = effect.pow(1.70)
         if (inChallenge('schal', 31)) effect = new Decimal(1)
         return effect
     },
@@ -58,7 +58,7 @@ addLayer("rein", {
             description: "Infinite Generator 1's production boost itself.",
             cost: new Decimal(1e14),
             effect() {
-                let power = new Decimal(1).add(buyableEffect('inf', 11).log(10))
+                let power = new Decimal(1).add(buyableEffect('inf', 11).add(1).log(7.5))
                 if (inChallenge('schal', 22)) power = new Decimal(1)
                 return power
             },
@@ -69,14 +69,14 @@ addLayer("rein", {
         },
         12: {
             title: "Reinforcement",
-            description: "Increase the base of the Super-Reincaranation based on your Reincaranations.",
-            cost: new Decimal(1.8e15),
+            description: "Increase the base of the Super-Reincarnation based on your Reincaranations.",
+            cost: new Decimal(1.7e15),
             effect() {
-                let power = new Decimal(1.14).add(player.rein.points.log(10).div(400))
+                let power = new Decimal(1.169).add(player.rein.points.log(10).div(306))
                 if (inChallenge('schal', 22)) power = new Decimal(1.14)
                 return power
             },
-            effectDisplay() { return "Base 1.14 >> " + format(upgradeEffect(this.layer, this.id))},
+            effectDisplay() { return "Base 1.169 >> " + format(upgradeEffect(this.layer, this.id))},
             unlocked(){
                 return (hasChallenge('schal', 12))
             },
@@ -106,7 +106,7 @@ addLayer("rein", {
         21: {
             title: "Multi-Purpose IV",
             description: "Boost IG1's base production based on your Infinity Points.",
-            cost: new Decimal(3e18),
+            cost: new Decimal(1.6e18),
             effect() {
                 let power = new Decimal(1.005).pow(player.inf.points.log(10))
                 return power
@@ -118,8 +118,8 @@ addLayer("rein", {
         },
         22: {
             title: "Ultimate Magic",
-            description: "Magic Effect is another 14% stronger (^1.14).",
-            cost: new Decimal(1e21),
+            description: "Magic Effect is another 45% stronger (^1.45).",
+            cost: new Decimal(1e20),
             unlocked(){
                 return (hasChallenge('schal', 12))
             },
@@ -127,68 +127,112 @@ addLayer("rein", {
         23: {
             title: "Talia Mar",
             description: "Looks like you're getting helped by someone! Gain a 100% boost to all IGs (16x total to IG1).",
-            cost: new Decimal(1e23),
+            cost: new Decimal(2.5e20),
             unlocked(){
                 return (hasChallenge('schal', 12))
             },
         },
         24: {
             title: "Ultimate Magic II",
-            description: "Super-Magic effect gains an additional +^0.02 boost.",
-            cost: new Decimal(1e27),
+            description: "Super-Magic effect is 22% stronger.",
+            cost: new Decimal(1e22),
+            unlocked(){
+                return (hasChallenge('schal', 12))
+            },
+        },
+        31: {
+            title: "Multi-Purpose V",
+            description: "Art Machine 6 now also boost Art Machine 2's base.",
+            cost: new Decimal(2e22),
+            unlocked(){
+                return (hasChallenge('schal', 12))
+            },
+        },
+        32: {
+            title: "Reinforcement II",
+            description: "Boost the effect of Art Upgrade 22 based on your Infinity Points.",
+            cost: new Decimal(1.2e23),
+            effect() {
+                let power = new Decimal(1.001).pow(player.inf.points.add(10).log(4e5)).minus(1)
+                power = softcap(power, new Decimal(0.2), new Decimal(1).div(power.add(1)))
+                return power
+            },
+            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id))},
+            unlocked(){
+                return (hasChallenge('schal', 12))
+            },
+        },
+        33: {
+            title: "Reinforcement III",
+            description: "Boost the base addition of Art Machine 6 based on your Super-Reincarnation Points.",
+            cost: new Decimal(5e24),
+            effect() {
+                let power = new Decimal(1.1).pow(player.srein.points.add(1).log(2))
+                power = softcap(power, new Decimal(1.6), new Decimal(1).div(power.add(-0.6)))
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x"},
+            unlocked(){
+                return (hasChallenge('schal', 12))
+            },
+        },
+        34: {
+            title: "Other Times Await...",
+            description: "I need to go eternal.",
+            cost: new Decimal(5e26),
             unlocked(){
                 return (hasChallenge('schal', 12))
             },
         },
     },
     milestones: {
-        0: {requirementDescription: "7 Reincaranations",
-            done() {return player[this.layer].best.gte(7)}, // Used to determine when to give the milestone
+        0: {requirementDescription: "5 Reincarnations",
+            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
             effectDescription: "Unlock autobuyer for Art Machines 1 and 2, and unlock 4 new upgrades.",
             toggles: [
                 ["art", "auto_am12"]
             ],
 
         },
-        1: {requirementDescription: "10 Reincaranations",
-            done() {return player[this.layer].best.gte(10)}, // Used to determine when to give the milestone
+        1: {requirementDescription: "7 Reincarnations",
+            done() {return player[this.layer].best.gte(7)}, // Used to determine when to give the milestone
             effectDescription: "Keep all Art Upgrades while being reincaranated.",
 
         },
-        2: {requirementDescription: "15 Reincaranations",
-            done() {return player[this.layer].best.gte(15)}, // Used to determine when to give the milestone
+        2: {requirementDescription: "9 Reincarnations",
+            done() {return player[this.layer].best.gte(9)}, // Used to determine when to give the milestone
             effectDescription: "Passively gain 50% of pending Art points per second.",
 
         },
-        3: {requirementDescription: "30 Reincaranations",
-            done() {return player[this.layer].best.gte(30)}, // Used to determine when to give the milestone
+        3: {requirementDescription: "19 Reincarnations",
+            done() {return player[this.layer].best.gte(19)}, // Used to determine when to give the milestone
             effectDescription: "Unlock autobuyer for Art Machine 3, bundled with the previous autobuyer for #1 and #2.",
             unlocked() {
                 return player.chal.points.gte(1) || player.inf.best.gte(1)
             },
         },
-        4: {requirementDescription: "36 Reincaranations",
-            done() {return player[this.layer].best.gte(36)}, // Used to determine when to give the milestone
+        4: {requirementDescription: "24 Reincarnations",
+            done() {return player[this.layer].best.gte(24)}, // Used to determine when to give the milestone
             effectDescription: "Keep Art Machines on reincaranation and competition resets.",
             unlocked() {
                 return player.chal.points.gte(1) || player.inf.best.gte(1)
             },
         },
-        5: {requirementDescription: "61 Reincaranations",
-           done() {return player[this.layer].best.gte(61)}, // Used to determine when to give the milestone
+        5: {requirementDescription: "30 Reincarnations",
+           done() {return player[this.layer].best.gte(30)}, // Used to determine when to give the milestone
             effectDescription: "Passively generate 100% of pending Magics per second.",
             unlocked() {
             return player.chal.points.gte(1) || player.inf.best.gte(1)
             },
         },
-        6: {requirementDescription: "10,000 Reincaranations",
+        6: {requirementDescription: "10,000 Reincarnations",
            done() {return player[this.layer].best.gte(1e4)}, // Used to determine when to give the milestone
             effectDescription: "Passively generate 10% of pending Infinity Points per second.",
             unlocked() {
             return player.inf.best.gte(1)
             },
         },
-        7: {requirementDescription: "1e15 Reincaranations",
+        7: {requirementDescription: "1e15 Reincarnations",
            done() {return player[this.layer].best.gte(1e15)}, // Used to determine when to give the milestone
             effectDescription: "Keep Reincaranation upgrades when doing Row 3 resets.",
             unlocked() {

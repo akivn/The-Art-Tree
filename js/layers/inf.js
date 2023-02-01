@@ -10,17 +10,17 @@ addLayer("inf", {
     }},
     branches: [
         ["ipow", function() { return player.ipow.best.gte(1) ? "#ffffff" : "#505050" }, 20],
-        ["eter", function() { return player.ipow.best.gte(1) ? "#ffffff" : "#505050" }, 20],
+        ["eter", function() { return player.eter.best.gte(1) ? "#ffffff" : "#505050" }, 20],
 
 
 	],
     color: "#FF9852",
-    requires: new Decimal(2).pow(1024), // Can be a function that takes requirement increases into account
+    requires: new Decimal(2).pow(1536), // Can be a function that takes requirement increases into account
     resource: "Infinity Points", // Name of prestige currency
     baseResource: "Art Points", // Name of resource prestige is based on
     baseAmount() {return player.art.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.008, // Prestige currency exponent
+    exponent: 0.0105, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade('art', 45)) mult = mult.times(upgradeEffect('art', 45))
@@ -48,10 +48,7 @@ addLayer("inf", {
         11: {
             title: "Inflation",
             description: "Unspent Infinity Points boost skill and AP gain.",
-            cost: new Decimal('1e378'),
-            currencyDisplayName: "Art Points",
-            currencyInternalName: "points",
-            currencyLayer: "art",
+            cost: new Decimal(10),
             effect() {
                 let power = Decimal.pow(player.inf.points.add(1), 7)
                 power = power.pow(buyableEffect('art', 22))
@@ -66,7 +63,7 @@ addLayer("inf", {
         },
         12: {
             title: "Unstoppable",
-            description: "Reincaranation Boost's formula is better.",
+            description: "Reincarnation Boost's formula is better.",
             cost: new Decimal(50),
             unlocked(){
                 return (hasUpgrade('inf', 11))
@@ -75,7 +72,7 @@ addLayer("inf", {
         13: {
             title: "Road to Parallel Universe",
             description: "Magic Boost is powered to ^1.5 again.",
-            cost: new Decimal(1e6),
+            cost: new Decimal(1e20),
             effect() {
                 let power = new Decimal(2)
                 return power
@@ -87,9 +84,9 @@ addLayer("inf", {
         21: {
             title: "Microadjustment",
             description: "Art Machine 1 is stronger again based on your skill.",
-            cost: new Decimal(2.5e7),
+            cost: new Decimal(1e26),
             effect() {
-                let power = new Decimal(0.00025).times(player.points.add(1).log(1e10))
+                let power = new Decimal(0.00016).times(player.points.add(1).log(1e10))
                 if (power.gte(0.2)) power = new Decimal(0.2)
                 if (inChallenge('schal', 32)) power = new Decimal(1)
                 return power
@@ -101,8 +98,8 @@ addLayer("inf", {
         },
         22: {
             title: "Microadjustment II",
-            description: "Art Machine 4's power base is increase by 1 (2^x -> 3^x).",
-            cost: new Decimal(1e9),
+            description: "Art Machine 4's power base is increase by 1 (1.6^x -> 2.5^x).",
+            cost: new Decimal(1e47),
             unlocked(){
                 return (hasUpgrade('inf', 13))
             },
@@ -110,7 +107,7 @@ addLayer("inf", {
         23: {
             title: "Progress",
             description: "Unlock Infinite Generator 3.",
-            cost: new Decimal(1e12),
+            cost: new Decimal(1e62),
             unlocked(){
                 return (hasUpgrade('inf', 13))
             },
@@ -118,7 +115,7 @@ addLayer("inf", {
         24: {
             title: "Power-Up!",
             description: "Unlock Infinity Power.",
-            cost: new Decimal(1e20),
+            cost: new Decimal(1e63),
             unlocked(){
                 return (hasUpgrade('inf', 13))
             },
@@ -126,7 +123,7 @@ addLayer("inf", {
         25: {
             title: "RETURN OF BASICS",
             description: "Unlock 8 new Art Upgrades",
-            cost: new Decimal(1e40),
+            cost: new Decimal(1e100),
             unlocked(){
                 return (hasUpgrade('inf', 24))
             },
@@ -138,13 +135,13 @@ addLayer("inf", {
             effectDescription: "Keep all Art Upgrades while Big Crunching (Gaining IP).",
 
         },
-        1: {requirementDescription: "75 Infinity Points",
-            done() {return player[this.layer].best.gte(75)}, // Used to determine when to give the milestone
+        1: {requirementDescription: "100,000 Infinity Points",
+            done() {return player[this.layer].best.gte(100000)}, // Used to determine when to give the milestone
             effectDescription: "Unlock Art Machine 4 Autobuyer, bundled with the previous 3.",
 
         },
-        2: {requirementDescription: "225 Infinity Points",
-            done() {return player[this.layer].best.gte(225)}, // Used to determine when to give the milestone
+        2: {requirementDescription: "100,000,000 Infinity Points",
+            done() {return player[this.layer].best.gte(1e8)}, // Used to determine when to give the milestone
             effectDescription: "Keep all competitions and Rein. Milestones when performing a Row-3 Reset.",
 
         },
@@ -231,7 +228,7 @@ addLayer("inf", {
         21: {
             title: "Infinite Generator 3",
             cost(x) { 
-                let cost = new Decimal(1e12).times(new Decimal(20).pow(x))
+                let cost = new Decimal(1e62).times(new Decimal(16).pow(x))
                 return cost 
             },
             effect(x){
@@ -259,7 +256,7 @@ addLayer("inf", {
         22: {
             title: "Infinite Generator 4",
             cost(x) { 
-                let cost = new Decimal(1e75).times(new Decimal(100).pow(x))
+                let cost = new Decimal(1e160).times(new Decimal(70).pow(x))
                 return cost 
             },
             effect(x){
@@ -279,7 +276,7 @@ addLayer("inf", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked(){
-                return (hasUpgrade('inf', 23))
+                return (hasUpgrade('art', 35))
             },
 
         },

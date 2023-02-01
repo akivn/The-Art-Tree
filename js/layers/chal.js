@@ -12,7 +12,7 @@ addLayer("chal", {
 
 	],
     color: "#990000",
-    requires: new Decimal(1e23), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1e25), // Can be a function that takes requirement increases into account
     resource: "Magics", // Name of prestige currency
     baseResource: "Art Points", // Name of resource prestige is based on
     baseAmount() {return player.art.points}, // Get the current amount of baseResource
@@ -35,64 +35,68 @@ addLayer("chal", {
     effect() {
         let effect = player[this.layer].points.add(2).log(2)
         if (hasUpgrade('art', 41)) effect = effect.times(upgradeEffect('art', 41))
-        if (hasUpgrade('art', 43)) effect = player[this.layer].points.add(1).pow(0.07)
+        if (hasUpgrade('art', 43)) effect = player[this.layer].points.add(1).pow(0.048)
         if (hasAchievement('ac', 125)) effect = effect.times(1.2)
         if (hasAchievement('ac', 133)) effect = effect.pow(1.01)
         if (hasUpgrade('inf', 13)) effect = effect.pow(1.5)
         if (hasAchievement('ac', 153)) effect = effect.times(1e10)
-        if (inChallenge('schal', 12)) power = new Decimal(1)
-        if (hasUpgrade('rein', 22)) effect = effect.pow(1.14)
+        if (inChallenge('schal', 12)) effect = new Decimal(1)
+        if (hasUpgrade('rein', 22)) effect = effect.pow(1.45)
         effect = effect.pow(tmp.schal.effect)
-        if (inChallenge('schal', 32)) power = new Decimal(1)
+        if (inChallenge('schal', 32)) effect = new Decimal(1)
+        effect = softcap(effect, new Decimal('1e750'), new Decimal(1).div(effect.add(10).log(10).div(3750).add(0.8)))
+        if (hasAchievement('ac', 183)) effect = power.times(1.01)
         return effect
     },
     effectDescription(){
-        return "boosting Reincaranation point effect by x" + format(tmp[this.layer].effect)     
+        let text = "boosting Reincaranation point effect by x" + format(tmp[this.layer].effect)
+        if (tmp.chal.effect.gte('1e14700')) text = "boosting Reincaranation point effect by x" + format(tmp[this.layer].effect) + " (Softcapped)"
+        return text    
     },
     challenges: {
         11: {
             name: "Yuiki Yaya",
             challengeDescription: "Ace of the Guardians, and she likes being childish. Art Machines are disabled.",
             rewardDescription: "Unlock Art Machine 3.",
-            goalDescription: "1e14 Skill",
+            goalDescription: "1e17 Skill",
             canComplete: function() {
-                return player.points.gte("1e14")
+                return player.points.gte(1e17)
             },
         },
         12: {
             name: "Somma Kukai",
             challengeDescription: "Jack of the Guardians, and he likes challenging things. Art Upgrades 1-6 are disabled.",
-            rewardDescription: "The formula of Art Upgrade 1 is much stronger ( log_3(Skill + 3) >> (Skill + 1) ^ 0.15 )",
-            goalDescription: "1e13 Skill",
+            rewardDescription: "The formula of Art Upgrade 1 is much stronger ( log_3(Skill + 3) >> (Skill + 1) ^ 0.225 )",
+            goalDescription: "5.5e8 Skill",
             canComplete: function() {
-                return player.points.gte(1e13)
+                return player.points.gte(5.5e8)
             },
         },
         21: {
             name: "Fujisaki Nadeshiko",
             challengeDescription: "Queen of the Guardians, and she likes peace and rest. Production of Skills and Art Points are Square Rooted.",
             rewardDescription: "Gain a x1e5 boost to the gain of AP, and remove the softcap of Art Machine 2's effect, despite the boost will become x1.1 instead of x1.3.",
-            goalDescription: "1,000,000 Art Points",
+            goalDescription: "1e15 Art Points",
             canComplete: function() {
-                return player.art.points.gte(1e6)
+                return player.art.points.gte(1e15)
             },
         },
         22: {
             name: "Hotori Tadase",
             challengeDescription: "King of the Guardians, and he likes being a king (kek). Reincaranation boost is always x1, apart from the Magic boost, which will be squared.",
             rewardDescription: "Unlock 2 new Art upgrades, and the effect of Reincaranation is squared.",
-            goalDescription: "6.66e66 Art Points",
+            goalDescription: "8.88e88 Art Points",
             canComplete: function() {
-                return player.art.points.gte(6666666666666666666666666666666666666666666666666666666666666666666)
+                return player.art.points.gte(8.88e88)
             },
         },
         31: {
             name: "Hinamori Amu",
             challengeDescription: "Joker of the Guardians, COOL AND SPICY. She 'loves' Art, and has a Shugo Chara called Miki, who is also proficient at arts. Art Machines are useless, and Reincaranation boost is always x1, apart from the Magic boost.",
-            rewardDescription: "Unlock 3 more new upgrades.",
-            goalDescription: "1.9940924e32 Art Points",
+            rewardDescription: "Unlock 1 more new upgrades.",
+            goalDescription: "1.9940924e37 Art Points",
             canComplete: function() {
-                return player.art.points.gte(1.9940924e32)
+                return player.art.points.gte(1.9940924e37)
             },
         },
     },

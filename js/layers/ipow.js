@@ -7,12 +7,12 @@ addLayer("ipow", {
 		points: new Decimal(0),
     }},
     color: "#F5CCA0",
-    requires: new Decimal(1e20), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1e63), // Can be a function that takes requirement increases into account
     resource: "Infinity Powers", // Name of prestige currency
     baseResource: "Infinity Points", // Name of resource prestige is based on
     baseAmount() {return player.inf.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 2.25, // Prestige currency exponent
+    exponent: 3.5, // Prestige currency exponent
     softcap: new Decimal(100),
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
@@ -29,13 +29,14 @@ addLayer("ipow", {
         let effect = new Decimal(1).add(player[this.layer].points.times(0.05))
         if (hasAchievement('ac', 155)) effect = effect.add(0.02)
         if (inChallenge('schal', 11)) effect = new Decimal(1)
-        effect = softcap(effect, new Decimal(2.5), new Decimal(0.5))
-        effect = softcap(effect, new Decimal(3.05), new Decimal(0.5))
+        effect = softcap(effect, new Decimal(1.25), new Decimal(1).div(effect.div(1.25)))
         if (hasAchievement('ac', 165)) effect = effect.times(1.02)
         return effect
     },
     effectDescription(){
-        return "boosting Infinity Point gain by ^" + format(tmp[this.layer].effect) + " (Neglecting softcap)"       
+        let text = "boosting Infinity Point gain by ^" + format(tmp[this.layer].effect)
+        if (tmp.chal.effect.gte('1.25')) text = "boosting Infinity Point gain by ^" + format(tmp[this.layer].effect) + " (Neglecting softcap) (Softcapped)"
+        return text           
     },
     update() {
     },
