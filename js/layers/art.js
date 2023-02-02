@@ -189,7 +189,7 @@ addLayer("art", {
         },
         33: {
             title: "Mastery of Amplification",
-            description: "The Art point effect is 10x stronger, and Reincaranation effect is boosted by 3x.",
+            description: "The Art point effect is 10x stronger, and Reincarnation effect is boosted by 3x.",
             cost: new Decimal(1e17),
             unlocked(){
                 return (hasMilestone('rein', 0) || player.eter.best.gte(1))
@@ -205,7 +205,7 @@ addLayer("art", {
         },
         41: {
             title: "Experience",
-            description: "Boost Magic effect based on your Reincaranation point.",
+            description: "Boost Magic effect based on your Reincarnation point.",
             cost: new Decimal(1e190),
             effect() {
                 let power = new Decimal(2).pow(player.rein.points.times(0.09))
@@ -260,7 +260,7 @@ addLayer("art", {
         },
         25: {
             title: "Ascension",
-            description: "Super-Reincaranation point base is 69% higher.",
+            description: "Super-Reincarnation point base is 69% higher.",
             cost: new Decimal('1e10000'),
             unlocked(){
                 return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
@@ -281,7 +281,7 @@ addLayer("art", {
         },
         45: {
             title: "Multi-Purpose II",
-            description: "Reincaranations boost Infinity Point gain at a reduced rate.",
+            description: "Reincarnations boost Infinity Point gain at a reduced rate.",
             cost: new Decimal('1e15750'),
             effect() {
                 let power = new Decimal(2).pow(player.rein.points.log(10))
@@ -429,7 +429,7 @@ addLayer("art", {
             display() { let data = tmp[this.layer].buyables[this.id]
                 let sent = "Cost: " + format(data.cost) + " Art points\n\
                 Amount: " + player[this.layer].buyables[this.id] + "/25\n\
-                Raising the Reincaranation point effect to the power of ^" + format(buyableEffect(this.layer, this.id))
+                Raising the Reincarnation point effect to the power of ^" + format(buyableEffect(this.layer, this.id))
                 return sent
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('art', 13) < 25},

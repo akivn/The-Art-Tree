@@ -184,7 +184,7 @@ addLayer("inf", {
             display() { let data = tmp[this.layer].buyables[this.id]
                 let sent = "Cost: " + format(data.cost) + " Infinity points\n\
                 Amount: " + player[this.layer].buyables[this.id] + "/999\n\
-                Generating " + format(buyableEffect(this.layer, this.id)) + " Reincaranations per second"
+                Generating " + format(buyableEffect(this.layer, this.id)) + " Reincarnations per second"
                 return sent
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('inf', 11) < 999},

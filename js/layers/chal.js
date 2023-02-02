@@ -45,12 +45,12 @@ addLayer("chal", {
         effect = effect.pow(tmp.schal.effect)
         if (inChallenge('schal', 32)) effect = new Decimal(1)
         effect = softcap(effect, new Decimal('1e750'), new Decimal(1).div(effect.add(10).log(10).div(3750).add(0.8)))
-        if (hasAchievement('ac', 183)) effect = power.times(1.01)
+        if (hasAchievement('ac', 183)) effect = effect.times(1.01)
         return effect
     },
     effectDescription(){
-        let text = "boosting Reincaranation point effect by x" + format(tmp[this.layer].effect)
-        if (tmp.chal.effect.gte('1e14700')) text = "boosting Reincaranation point effect by x" + format(tmp[this.layer].effect) + " (Softcapped)"
+        let text = "boosting Reincarnation point effect by x" + format(tmp[this.layer].effect)
+        if (tmp.chal.effect.gte('1e14700')) text = "boosting Reincarnation point effect by x" + format(tmp[this.layer].effect) + " (Softcapped)"
         return text    
     },
     challenges: {
@@ -83,8 +83,8 @@ addLayer("chal", {
         },
         22: {
             name: "Hotori Tadase",
-            challengeDescription: "King of the Guardians, and he likes being a king (kek). Reincaranation boost is always x1, apart from the Magic boost, which will be squared.",
-            rewardDescription: "Unlock 2 new Art upgrades, and the effect of Reincaranation is squared.",
+            challengeDescription: "King of the Guardians, and he likes being a king (kek). Reincarnation boost is always x1, apart from the Magic boost, which will be squared.",
+            rewardDescription: "Unlock 2 new Art upgrades, and the effect of Reincarnation is squared.",
             goalDescription: "8.88e88 Art Points",
             canComplete: function() {
                 return player.art.points.gte(8.88e88)
@@ -92,7 +92,7 @@ addLayer("chal", {
         },
         31: {
             name: "Hinamori Amu",
-            challengeDescription: "Joker of the Guardians, COOL AND SPICY. She 'loves' Art, and has a Shugo Chara called Miki, who is also proficient at arts. Art Machines are useless, and Reincaranation boost is always x1, apart from the Magic boost.",
+            challengeDescription: "Joker of the Guardians, COOL AND SPICY. She 'loves' Art, and has a Shugo Chara called Miki, who is also proficient at arts. Art Machines are useless, and Reincarnation boost is always x1, apart from the Magic boost.",
             rewardDescription: "Unlock 1 more new upgrades.",
             goalDescription: "1.9940924e37 Art Points",
             canComplete: function() {

@@ -69,7 +69,7 @@ addLayer("rein", {
         },
         12: {
             title: "Reinforcement",
-            description: "Increase the base of the Super-Reincarnation based on your Reincaranations.",
+            description: "Increase the base of the Super-Reincarnation based on your Reincarnations.",
             cost: new Decimal(1.7e15),
             effect() {
                 let power = new Decimal(1.169).add(player.rein.points.log(10).div(306))
@@ -213,7 +213,7 @@ addLayer("rein", {
         },
         4: {requirementDescription: "24 Reincarnations",
             done() {return player[this.layer].best.gte(24)}, // Used to determine when to give the milestone
-            effectDescription: "Keep Art Machines on reincaranation and competition resets.",
+            effectDescription: "Keep Art Machines on reincarnation and competition resets.",
             unlocked() {
                 return player.chal.points.gte(1) || player.inf.best.gte(1)
             },
@@ -234,7 +234,7 @@ addLayer("rein", {
         },
         7: {requirementDescription: "1e15 Reincarnations",
            done() {return player[this.layer].best.gte(1e15)}, // Used to determine when to give the milestone
-            effectDescription: "Keep Reincaranation upgrades when doing Row 3 resets.",
+            effectDescription: "Keep Reincarnation upgrades when doing Row 3 resets.",
             unlocked() {
             return hasChallenge('schal', 12)
             },
