@@ -3,7 +3,7 @@ let modInfo = {
 	id: "ormc",
 	author: "akivn, the President of Origin Railway",
 	pointsName: "skill",
-	modFiles: ["layers/art.js", "layers/rein.js", "layers/ipow.js", "layers/eter.js", "layers/srein.js", "layers/chal.js", "layers/schal.js", "layers/inf.js", "layers/achievement.js", "tree.js"],
+	modFiles: ["layers/art.js", "layers/booster.js", "layers/enhancer.js", "layers/capsule.js", "layers/achievement.js", "tree.js"],
 
 	discordName: "neuro sama your reality (X)",
 	discordLink: "https://discord.gg/h6TFgujqtN",
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "A0.41",
-	name: "Eternal Patch",
+	num: "RW1-A0.1",
+	name: "Eternal Part II",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -61,15 +61,14 @@ function getPointGen() {
 	let gain = new Decimal(0.15)
 	gain = gain.times(tmp.ac.effect)
 	gain = gain.times(tmp.art.effect)
-	gain = gain.times(tmp.rein.effect)
-	gain = gain.times(buyableEffect('art', 12))
+	gain = gain.times(tmp.art.buyables[11].effect)
+	gain = gain.times(tmp.c.buyables[11].effect)
+	if (hasUpgrade('boo', 11)) gain = gain.times(7)
+	if (hasUpgrade('boo', 12)) gain = gain.times(7)
+	if (hasMilestone('c', 0))  gain = gain.times(100)
 	if (hasUpgrade('art', 11)) gain = gain.times(upgradeEffect('art', 11))
+	if (hasUpgrade('art', 12)) gain = gain.times(upgradeEffect('art', 12))
 	if (hasUpgrade('art', 13)) gain = gain.times(upgradeEffect('art', 13))
-	if (inChallenge('chal', 21) || inChallenge('schal', 31)) gain = gain.pow(0.5)
-	if (hasUpgrade('inf', 11)) gain = gain.times(upgradeEffect('inf', 11))
-	if (hasUpgrade('art', 35)) gain = gain.times(upgradeEffect('art', 35))
-	gain = gain.times(tmp.eter.power.effect)
-	gain = softcap(gain, new Decimal('1e2000'), Decimal.max(new Decimal(0.999).pow(player.points.add(1).log(10).div(100)), new Decimal(0.1)))
 	return gain
 }
 
@@ -83,7 +82,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.eter.points.gte(3)
+	return false
 }
 
 

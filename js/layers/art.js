@@ -5,38 +5,33 @@ addLayer("art", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
-        auto_am12: true,
+        auto1: true,
     }},
-    color: "#4BDC13",
+    color: "#739DBF",
     branches: [
-		["rein", function() { return player.rein.best.gte(1) ? "#ffffff" : "#505050" }, 20],
-        ["chal", function() { return player.chal.best.gte(1) ? "#ffffff" : "#505050" }, 20],
-        ["inf", function() { return player.inf.best.gte(1) ? "#ffffff" : "#505050" }, 20],
-
+        ["boo", function() { return player.boo.unlocked ? "#a028f6" : "#303030" }, 25],
+        ["en", function() { return player.en.unlocked ? "#a028f6" : "#303030" }, 25],
+        ["c", function() { return player.c.unlocked ? "#a028f6" : "#303030" }, 25],
 
 	],
     requires: new Decimal(1), // Can be a function that takes requirement increases into account
     resource: "Art points", // Name of prestige currency
-    baseResource: "points", // Name of resource prestige is based on
+    baseResource: "Skills", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.42, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        mult = mult.times(tmp.rein.effect)
-        if (hasUpgrade('art', 11)) mult = mult.times(upgradeEffect('art', 11))
-        if (hasUpgrade('art', 12)) mult = mult.times(upgradeEffect('art', 12))
+        mult = mult.times(tmp.boo.effect)
+        if (hasUpgrade('art', 21)) mult = mult.times(upgradeEffect('art', 21))
         if (hasUpgrade('art', 22)) mult = mult.times(upgradeEffect('art', 22))
-        if (hasUpgrade('art', 32)) mult = mult.times(buyableEffect('art', 12))
-        if (hasChallenge('chal', 21)) mult = mult.times(new Decimal(1e5))
-        if (hasUpgrade('inf', 11)) mult = mult.times(upgradeEffect('inf', 11))
-        if (hasUpgrade('art', 53)) mult = mult.times(upgradeEffect('art', 53))
+        if (hasUpgrade('art', 23)) mult = mult.times(upgradeEffect('art', 23))
+        if (hasUpgrade('boo', 14)) mult = mult.times(upgradeEffect('boo', 14))
+        mult = mult.times(tmp.art.buyables[13].effect)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         let pow = new Decimal(1)
-        if (inChallenge('chal', 21) || inChallenge('schal', 31)) pow = pow.pow(0.5)
-        if (inChallenge('schal', 21)) pow = new Decimal(0.25)
         return new Decimal(pow)
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -44,11 +39,9 @@ addLayer("art", {
         {key: "a", description: "A: Reset for Art points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     effect() {
-        let effect = Decimal.max(new Decimal(1), player[this.layer].points.pow(0.25))
-        if (hasUpgrade('art', 14)) effect = effect.pow(upgradeEffect('art', 14))
-        effect = effect.pow(buyableEffect('art', 11))
-        if (hasUpgrade('art', 33)) effect = effect.times(10)
-        if (inChallenge('schal', 12)) power = new Decimal(1)
+        let effect = Decimal.max(new Decimal(1), player[this.layer].points.add(1).pow(0.5))
+        effect = effect.times(tmp.art.buyables[12].effect)
+        if (hasUpgrade('en', 11))effect = effect.pow(upgradeEffect('en', 11))
         return effect
     },
     effectDescription(){
@@ -59,313 +52,199 @@ addLayer("art", {
     },
     upgrades: {
         11: {
-            title: "Start",
-            description: "Gain more for both Art points and skills based on your point amount.",
-            cost: new Decimal(3),
+            title: "Motivation 1",
+            description: "Boost Skill gain even more from your Art Points.",
+            cost: new Decimal(2500),
             effect() {
-                let power = new Decimal(player.points.add(2).log(2))
-                if (hasUpgrade('art', 21)) power = power.pow(upgradeEffect('art', 21))
-                if (hasUpgrade('art', 34)) power = power.pow(1.5)
-                softcap(power, new Decimal(10), new Decimal(1).div(new Decimal(1).add(power.div(50))))
-                if (hasChallenge('chal', 12)) power = new Decimal(player.points.add(1).pow(0.225))
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(player.art.points.add(5).log(5))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (player.art.points.max(1) || player.eter.best.gte(1))
+                return (true)
             },
         },
         12: {
-            title: "Motivation",
-            description: "Art point gain is boosted by itself.",
-            cost: new Decimal(12),
+            title: "Motivation 2",
+            description: "Boost Skill gain even more from your Skills (Self-dependent).",
+            cost: new Decimal(12500),
             effect() {
-                let power = new Decimal(player[this.layer].points.add(2).log(2))
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                power = power.times(buyableEffect('art', 21))
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(player.points.add(4.4).log(4.4))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasUpgrade('art', 11) || player.eter.best.gte(1))
+                return (true)
             },
         },
         13: {
-            title: "Motivation II",
-            description: "Skill gain boosts itself.",
-            cost: new Decimal(100),
+            title: "Motivation 3",
+            description: "Boost Skill gain even more from your Art Machine 1's amount",
+            cost: new Decimal(1e6),
             effect() {
-                let power = new Decimal(player.points.pow(0.168).add(1))
-                softcap(power, new Decimal(100), new Decimal(0.6))
-                softcap(power, new Decimal(1e72), new Decimal(0.5))
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                power = power.times(buyableEffect('art', 21))
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = getBuyableAmount('art', 11).times(2).add(1)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasUpgrade('art', 12) || player.eter.best.gte(1))
+                return (true)
             },
         },
         14: {
-            title: "Amplify!",
-            description: "Art point effect is boosted to ^1.3.",
-            cost: new Decimal(1000),
-            effect() {
-                let power = new Decimal(1.3)
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
-                return power
-            },
-            effectDisplay() { return "^" + format(upgradeEffect(this.layer, this.id)) },
+            title: "Anrokku! 1",
+            description: "Unlock Art Machine 3",
+            cost: new Decimal(5e12),
             unlocked(){
-                return (hasUpgrade('art', 13) || player.eter.best.gte(1))
+                return (true)
             },
         },
         21: {
-            title: "Optimization",
-            description: "Art Upgrade 1 is boosted to ^1.75",
-            cost: new Decimal(5000),
+            title: "Art Booster 1",
+            description: "Boost Art Point gain even more from your Art Points (Self-dependent).",
+            cost: new Decimal(25000),
             effect() {
-                let power = new Decimal(1.75)
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(player.art.points.add(3.8).log(3.8))
                 return power
             },
-            effectDisplay() { return "^" + format(upgradeEffect(this.layer, this.id)) },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasUpgrade('art', 14) || player.eter.best.gte(1))
+                return (true)
             },
         },
         22: {
-            title: "Motivation III",
-            description: "Gain 2x more Art points.",
-            cost: new Decimal(5e5),
+            title: "Art Booster 2",
+            description: "Boost Art Point gain even more from your Skills.",
+            cost: new Decimal(2.5e8),
             effect() {
-                let power = new Decimal(2)
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(player.points.add(6.2).log(6.2))
                 return power
             },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasUpgrade('art', 21) || player.eter.best.gte(1))
+                return (true)
             },
         },
         23: {
-            title: "Motivation IV",
-            description: "Unlock Art Machines.",
-            cost: new Decimal(1.3e6),
+            title: "Art Booster 3",
+            description: "Boost Art Point gain even more from your Art Machine 3's amount",
+            cost: new Decimal(1e18),
+            effect() {
+                let power = getBuyableAmount('art', 12).times(3).add(1)
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasUpgrade('art', 22) || player.eter.best.gte(1))
+                return (true)
             },
         },
         24: {
-            title: "Watashi no Kokoro, Anrokku! I",
-            description: "Unlock the next layer.",
-            cost: new Decimal(3e8),
+            title: "Anrokku! 2",
+            description: "Unlock Art Machine 4",
+            cost: new Decimal(1e83),
             unlocked(){
-                return (hasUpgrade('art', 23) || player.eter.best.gte(1))
+                return (true)
             },
         },
         31: {
-            title: "Motivation V",
-            description: "Art Machine 1 is 1.2x stronger.",
-            cost: new Decimal(1e13),
+            title: "Booster Booster 1",
+            description: "Booster scaling is reduced based on your Art Points.",
+            cost: new Decimal(1e80),
+            effect() {
+                let power = player.art.points.add(10).log(10).div(825).add(1)
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
             unlocked(){
-                return (hasMilestone('rein', 0) || player.eter.best.gte(1))
+                return (player.boo.unlocked)
             },
         },
         32: {
-            title: "Multi-Purpose",
-            description: "Art Machine 2 now also applies to Art Point gain.",
-            cost: new Decimal(5e14),
+            title: "Booster Strength",
+            description: "Booster effect is boosted based on your Skills.",
+            cost: new Decimal(1e205),
+            effect() {
+                let power = player.points.add(1).log(10).times(3.2).add(1)
+                return power
+            },
+            effectDisplay() { return "x" + format(upgradeEffect(this.layer, this.id)) },
             unlocked(){
-                return (hasMilestone('rein', 0) || player.eter.best.gte(1))
+                return (player.boo.unlocked)
             },
         },
         33: {
-            title: "Mastery of Amplification",
-            description: "The Art point effect is 10x stronger, and Reincarnation effect is boosted by 3x.",
-            cost: new Decimal(1e17),
+            title: "Booster Booster 2",
+            description: "Booster effect is boosted based on your unspent Enhancers.",
+            cost: new Decimal(1e225),
+            effect() {
+                let power = player.en.points.add(1).pow(7)
+                return power
+            },
+            effectDisplay() { return "x" + format(upgradeEffect(this.layer, this.id)) },
             unlocked(){
-                return (hasMilestone('rein', 0) || player.eter.best.gte(1))
+                return (player.en.unlocked)
             },
         },
         34: {
-            title: "Mastery of Optimization",
-            description: "Art Upgrade 1 is boosted by a further ^1.5 (Affected by softcaps), and unlock challenges.",
-            cost: new Decimal(4e19),
+            title: "Anrokku! 3",
+            description: "Unlock Art Machine 5.\n\ Requires 1e20 total Capsules.",
+            cost: new Decimal('1e1680'),
+            canAfford(){
+                return (player.art.points.gte('1e1680') && player.c.total.gte(1e20))
+            },
             unlocked(){
-                return (hasMilestone('rein', 0) || player.eter.best.gte(1))
+                return (player.boo.unlocked)
             },
         },
         41: {
-            title: "Experience",
-            description: "Boost Magic effect based on your Reincarnation point.",
-            cost: new Decimal(1e190),
-            effect() {
-                let power = new Decimal(2).pow(player.rein.points.times(0.09))
-                if (inChallenge('chal', 12)) power = new Decimal(1)
-                power = power.times(buyableEffect('art', 21))
-                return power
+            title: "Anrokku! 4",
+            description: "Unlock Art Enhancer 3.\n\ Requires 10 total Capsules.",
+            cost: new Decimal('1e474'),
+            canAfford(){
+                return (player.art.points.gte('1e474') && player.c.total.gte(10))
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
             unlocked(){
-                return (hasChallenge('chal', 22) || player.eter.best.gte(1))
+                return (player.en.unlocked)
             },
         },
         42: {
-            title: "Pump up, player!",
-            description: "Another +^0.10 boost on Art Machine 1.",
-            cost: new Decimal(1e207),
+            title: "Anrokku! 5",
+            description: "Unlock Art Enhancer 4.",
+            cost: new Decimal('1e9999'),
             unlocked(){
-                return (hasChallenge('chal', 22) || player.eter.best.gte(1))
+                return (player.en.unlocked)
             },
         },
         43: {
-            title: "Magic Egg",
-            description: "Magic Effect formula is changed ( log_2(Magic + 2) > (Magic + 1)^0.048 )",
-            cost: new Decimal(1e295),
+            title: "Anrokku! 6",
+            description: "Unlock Art Enhancer 5.",
+            cost: new Decimal('1e999999'),
             unlocked(){
-                return (hasChallenge('chal', 31) || player.eter.best.gte(1))
+                return (player.en.unlocked)
             },
         },
-        44: {
-            title: "Access",
-            description: "Unlock Art Machine 4.",
-            cost: new Decimal(1e243),
-            unlocked(){
-                return (hasChallenge('chal', 22) || player.eter.best.gte(1))
-            },
-        },
-        51: {
-            title: "Watashi no Kokoro, Unlock AGAIN!",
-            description: "Unlock the next layer.",
-            cost: new Decimal('1e300'),
-            unlocked(){
-                return (hasChallenge('chal', 22) || player.eter.best.gte(1))
-            },
-        },
-        15: {
-            title: "Van Gogh",
-            description: "Unlock Art Machine 5.",
-            cost: new Decimal('1e8400'),
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        25: {
-            title: "Ascension",
-            description: "Super-Reincarnation point base is 69% higher.",
-            cost: new Decimal('1e10000'),
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        35: {
-            title: "NEW DIMENSIONS???",
-            description: "Unlock Infinite Generator 4, and boost skill gain based on your Infinity Power.",
-            cost: new Decimal('1e11000'),
-            effect() {
-                let power = new Decimal(1e40).pow(player.ipow.points)
-                return power
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        45: {
-            title: "Multi-Purpose II",
-            description: "Reincarnations boost Infinity Point gain at a reduced rate.",
-            cost: new Decimal('1e15750'),
-            effect() {
-                let power = new Decimal(2).pow(player.rein.points.log(10))
-                return power
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        52: {
-            title: "Final Stretch",
-            description: "Art Machine 5's effect is added based on your Magics.",
-            cost: new Decimal('1e17600'),
-            effect() {
-                let power = new Decimal(player.chal.points.add(1).log(10).div(100000))
-                if (hasUpgrade('rein', 32)) power = power.add(upgradeEffect('rein', 32))
-                return power
-            },
-            effectDisplay() { return "+" + format(upgradeEffect(this.layer, this.id))},
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        53: {
-            title: "Bring it into Life!",
-            description: "Your Achievement point boost art point gain.",
-            cost: new Decimal('1e20610'),
-            effect() {
-                let power = new Decimal(1e12).pow(player.ac.points)
-                return power
-            },
-            effectDisplay() { return "x" + format(upgradeEffect(this.layer, this.id))},
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        54: {
-            title: "RE:Vive",
-            description: "Art Machine 1's boost is another +^0.05 higher.",
-            cost: new Decimal('1e22700'),
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
-        55: {
-            title: "This World is just One of the Worlds",
-            description: "Unlock Super-Competitions.",
-            cost: new Decimal('1e25500'),
-            unlocked(){
-                return (hasUpgrade('inf', 25) || player.eter.best.gte(1))
-            },
-        },
+
     },
     buyables: {
         11: {
             title: "Art Machine 1",
             cost(x) { 
-                let cost = new Decimal(1e6).times(new Decimal(3).pow(x.div(2)))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
+                let cost = new Decimal(6).pow(x)
+                cost = softcap(cost, new Decimal(1e8), new Decimal(1.02).pow(x.minus(10)))
+                cost = cost.div(tmp.art.buyables[21].effect)
                 return cost 
             },
             effect(x){
-                let power = new Decimal(1).add(new Decimal(0.09).times(x))
-                power = softcap(power, new Decimal(1.45), new Decimal(0.9).div(x.div(5)))
-                if (hasUpgrade('art', 31)) power = power.times(1.2)
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (hasUpgrade('art', 42)) power = power.add(0.1)
-                if (hasAchievement('ac', 134)) power = power.add(0.05)
-                if (hasUpgrade('inf', 21)) power = power.add(upgradeEffect('inf', 21))
-                if (hasUpgrade('art', 54)) power = power.add(0.05)
-                if (hasChallenge('schal', 31)) power = power.add(0.15)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(2).pow(x)
+                if (hasUpgrade('boo', 11)) power = new Decimal(upgradeEffect('boo', 11)).pow(x)
+                power = power.times(tmp.en.buyables[12].effect)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "/20\n\
-                Raising Art point effect to the power of ^" + format(buyableEffect(this.layer, this.id))
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Raising skill gain by x" + format(buyableEffect(this.layer, this.id))
             },
-            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('art', 11) < 20},
+            canAfford() { return player[this.layer].points.gte(this.cost())},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -374,99 +253,74 @@ addLayer("art", {
         12: {
             title: "Art Machine 2",
             cost(x) { 
-                let cost = new Decimal(1e7).times(new Decimal(10).pow(x.div(1.75)))
-                cost = softcap(cost, new Decimal(1e40), new Decimal(1).mul(cost.log(10).div(40).pow(1.41)))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
+                let cost = new Decimal(225).times(new Decimal(7).pow(x))
+                cost = softcap(cost, new Decimal(1e18), new Decimal(1.013).pow(x.minus(18)))
+                cost = cost.div(tmp.art.buyables[21].effect)
                 return cost 
             },
             effect(x){
-                let power = new Decimal(1.3).pow(x)
-                if (!hasChallenge('chal', 21)) power = softcap(power, new Decimal(5), new Decimal(1).div(power.log(5)))
-                if (hasChallenge('chal', 21)) power = new Decimal(1.1).pow(x)
-                if (getBuyableAmount('art', 23) > 0 && hasUpgrade('rein', 31)) power = Decimal.pow(new Decimal(1.1).add(buyableEffect('art', 23)), x)
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(3).pow(x)
+                if (hasUpgrade('boo', 12)) power = new Decimal(upgradeEffect('boo', 12)).pow(x)
+                power = power.times(tmp.en.buyables[12].effect)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
-                let sent = "Cost: " + format(data.cost) + " Art points\n\
+                return "Cost: " + format(data.cost) + " Art points\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Multiplies skill gain by x" + format(buyableEffect(this.layer, this.id))
-                if (hasUpgrade('art', 32)) sent = "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Multiplying skill and Art point gain by x" + format(buyableEffect(this.layer, this.id))
-                return sent
+                Raising Art Point effect by x" + format(buyableEffect(this.layer, this.id))
             },
-            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            canAfford() { return player[this.layer].points.gte(this.cost())},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
-
+            unlocked(){
+                return (player.art.best.gte(100) || player.boo.best.gte(5))
+            },
         },
         13: {
             title: "Art Machine 3",
             cost(x) { 
-                let cost = new Decimal(1e25).times(new Decimal(10).pow(x))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
+                let cost = new Decimal(5e12).times(new Decimal(10).pow(x))
+                cost = softcap(cost, new Decimal(1e28), new Decimal(1.012).pow(x.minus(15)))
+                cost = cost.div(tmp.art.buyables[21].effect)
                 return cost 
             },
             effect(x){
-                let power = new Decimal(1).add(x.div(10))
-                power = softcap(power, new Decimal(1.2), new Decimal(1).div(power.add(0.215).log(2).times(2)))
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (hasAchievement('ac', 143)) power = power.times(1.05)
-                if (hasAchievement('ac', 145)) power = power.add(0.1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(2.25).pow(x)
+                if (hasUpgrade('boo', 13)) power = new Decimal(upgradeEffect('boo', 13)).pow(x)
+                power = power.times(tmp.en.buyables[12].effect)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
-                let sent = "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "/25\n\
-                Raising the Reincarnation point effect to the power of ^" + format(buyableEffect(this.layer, this.id))
-                return sent
+                return "Cost: " + format(data.cost) + " Art points\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Raising Art Point gain by x" + format(buyableEffect(this.layer, this.id))
             },
-            canAfford() { return player[this.layer].points.gte(this.cost()) && getBuyableAmount('art', 13) < 25},
+            canAfford() { return player[this.layer].points.gte(this.cost())},
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked(){
-                return (hasChallenge('chal', 11))
+                return (hasUpgrade('art', 14))
             },
-
         },
         21: {
             title: "Art Machine 4",
             cost(x) { 
-                let cost = new Decimal(1e243).times(new Decimal(1e6).pow(x))
-                cost = softcap(cost, new Decimal('1e273'), new Decimal(1).mul(cost.log(10).div(90).min(3)))
-                cost = softcap(cost, new Decimal('1e16000'), new Decimal(1).mul(cost.log(10).div(2000).min(6)))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
+                let cost = new Decimal(1e83).times(new Decimal(1e10).pow(x))
+                cost = softcap(cost, new Decimal(1e163), new Decimal(1.024).pow(x.minus(8)))
                 return cost 
             },
             effect(x){
-                let power = Decimal.pow(1.6, x)
-                if (hasUpgrade('inf', 22)) power = Decimal.pow(2.5, x)
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (getBuyableAmount('art', 23) > 0) power = Decimal.pow(new Decimal(3).add(buyableEffect('art', 23)), x)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(1e8).pow(x)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
-                let sent = "Cost: " + format(data.cost) + " Art points\n\
+                return "Cost: " + format(data.cost) + " Art points\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting Art Upgrade 2, 3 and 13 by " + format(buyableEffect(this.layer, this.id)) + "x"
-                return sent
+                Reduce all of the previous Machine's prices by /" + format(buyableEffect(this.layer, this.id))
             },
             canAfford() { return player[this.layer].points.gte(this.cost())},
             buy() {
@@ -474,34 +328,24 @@ addLayer("art", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked(){
-                return (hasUpgrade('art', 44))
+                return (hasUpgrade('art', 24))
             },
-
         },
         22: {
             title: "Art Machine 5",
             cost(x) { 
-                let cost = new Decimal('1e8400').times(new Decimal(1e300).pow(x))
-                cost = softcap(cost, new Decimal('1e20000'), new Decimal(1.8))
-                cost = softcap(cost, new Decimal('1e40000'), new Decimal(1).mul(cost.add(10).log(10).div(10000).min(3)))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
+                let cost = new Decimal('1e1680').times(new Decimal(1e100).pow(x))
+                cost = softcap(cost, new Decimal('1e2400'), new Decimal(1.08).pow(x.minus(9)))
                 return cost 
             },
             effect(x){
-                let power = new Decimal(1).add(new Decimal(0.015).times(x))
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (hasUpgrade('art', 52)) power = power.add(upgradeEffect('art', 52))
-                if (inChallenge('schal', 31)) power = new Decimal(1)
+                let power = new Decimal(1).add(new Decimal(0.3).times(x.pow(0.9)))
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
-                let sent = "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting Infinity Upgrade 1 by ^" + format(buyableEffect(this.layer, this.id))
-                return sent
+                return "Cost: " + format(data.cost) + " Art points\n\
+                Amount: " + player[this.layer].buyables[this.id] + " \n\
+                Boost Miki's Capsule effect by ^" + format(buyableEffect(this.layer, this.id))
             },
             canAfford() { return player[this.layer].points.gte(this.cost())},
             buy() {
@@ -509,68 +353,12 @@ addLayer("art", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked(){
-                return (hasUpgrade('art', 15))
+                return (hasUpgrade('art', 34))
             },
-
-        },
-        23: {
-            title: "Art Machine 6",
-            cost(x) { 
-                let cost = new Decimal('1e28000').times(new Decimal('1e650').pow(x))
-                cost = softcap(cost, new Decimal('1e40000'), new Decimal(2))
-                cost = softcap(cost, new Decimal('1e60000'), new Decimal(1).mul(cost.log(10).div(20000).min(3)))
-                if (inChallenge('chal', 11)) cost = new Decimal(1e309)
-                if (inChallenge('chal', 31)) cost = new Decimal(1e309)
-                if (inChallenge('schal', 31)) cost = new Decimal(1e309)
-                return cost 
-            },
-            effect(x){
-                let power = new Decimal(0).add(new Decimal(0.055).times(x))
-                if (hasAchievement('ac', 173)) power = new Decimal(1.03).pow(x).minus(1)
-                if (!hasAchievement('ac', 173)) power = softcap(power, new Decimal(0.25), new Decimal(0.4))
-                if (!hasAchievement('ac', 173)) power = softcap(power, new Decimal(0.75), new Decimal(1).mul(x.div(100)))
-                if (hasUpgrade('rein', 14) && !inChallenge('schal', 22)) power = power.times(3)
-                if (hasUpgrade('rein', 33)) power = power.times(upgradeEffect('rein', 33))
-                if (inChallenge('chal', 11)) power = new Decimal(1)
-                if (inChallenge('chal', 31)) power = new Decimal(1)
-                if (inChallenge('schal', 31)) power = new Decimal(1)
-                return power
-            },
-            display() { let data = tmp[this.layer].buyables[this.id]
-                let sent = "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting Art Machine 4's base by +" + format(buyableEffect(this.layer, this.id))
-                if (hasUpgrade('rein', 31)) sent = "Cost: " + format(data.cost) + " Art points\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting Art Machine 2 & 4's base by +" + format(buyableEffect(this.layer, this.id))
-                return sent
-            },
-            canAfford() { return player[this.layer].points.gte(this.cost())},
-            buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
-            },
-            unlocked(){
-                return (hasChallenge('schal', 11))
-            },
-
         },
 
     },
     clickables :{
-        11: {
-            display() {return "Respec Art Upgrades"},
-            unlocked() {return hasAchievement('ac', 182)},
-            canClick() {
-                return player.art.upgrades != []
-            },
-            onClick() {
-                player.points = new Decimal(0)
-                player.art.upgrades = []
-            }
-            // etc...
-        }
-        // etc... 
     },
     layerShown(){return true},
     tabFormat: {
@@ -579,49 +367,48 @@ addLayer("art", {
                 "main-display",
                 "prestige-button",
                 "clickables",
-                "upgrades",
+                "buyables"
             ],
         },
-        "Art Machines": {
+        "Upgrades": {
             content: [
                 "main-display",
                 "prestige-button",
-                "buyables"
+                "clickables",
+                "upgrades"
             ],
             unlocked() {
-                return (hasUpgrade('art', 23))
+                return (player.art.best.gte(1000) || player.boo.best.gte(1) || player.en.best.gte(1))
             }
 
         },
     },
+    canBuyMax (){
+        return (true)
+    },
     automate() {
-        if (hasMilestone('rein', 0) && player[this.layer].auto_am12 ) {
+        if (player.art.auto1 == true && hasMilestone('boo', 0)) {
             buyBuyable('art', 11)
             buyBuyable('art', 12)
-        }
-        if (hasMilestone('rein', 3) && player[this.layer].auto_am12 ) {
             buyBuyable('art', 13)
         }
-        if (hasMilestone('inf', 1) && player[this.layer].auto_am12 ) {
+        if (player.art.auto1 == true && hasMilestone('en', 0)) {
             buyBuyable('art', 21)
-        }
-        if (hasChallenge('schal', 11) && player[this.layer].auto_am12 ) {
-            buyBuyable('art', 22)
-        }
-        if (hasMilestone('inf', 5) && player[this.layer].auto_am12 ) {
-            buyBuyable('art', 23)
         }
     },
     passiveGeneration() {
-        return hasMilestone("rein", 2) ? 0.5:0
+        return hasMilestone("boo", 1) ? 1:0
         },
 
     doReset(resettingLayer) {
         let keep = []
-        if (hasMilestone("rein", 0)) keep.push("auto_am12")
-        if (hasMilestone("rein", 1) || hasMilestone('inf', 0)) keep.push("upgrades")
-        if (hasMilestone("rein", 4)) keep.push("buyables")
+        if (hasMilestone('boo', 2)) keep.push("upgrades")
+        if (hasMilestone('boo', 2)) keep.push("buyables")
         if (layers[resettingLayer].row > this.row) layerDataReset("art", keep)
     },
+    resetsNothing(){
+        hasMilestone('c', 5)
+    }
 
 })
+
