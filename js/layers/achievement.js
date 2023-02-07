@@ -27,27 +27,17 @@ addLayer("ac", {
     achievements: {
         111: {
             name: "Start",
-            tooltip: "Get 1 Art Machine.",
+            tooltip: "Get 1 Art Point.",
             done() {
-                return getBuyableAmount('art', 11).gte(1)
+                return player.art.points.gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         112: {
-            name: "100 Art Points is a lot",
-            tooltip: "Get 100 Art Points.",
-            done() {
-                return player.art.best.gte(100)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        113: {
-            name: "One Miki",
-            tooltip: "Get an Upgrade.",
+            name: "First Step",
+            tooltip: "Get an Art Upgrade.",
             done() {
                 return hasUpgrade('art', 11)
             },
@@ -55,38 +45,48 @@ addLayer("ac", {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
-        114: {
-            name: "The Powerful 3",
-            tooltip: "Get an Art Machine 3.",
+        113: {
+            name: "An Additional Help",
+            tooltip: "Get an Art Machine.",
             done() {
-                return getBuyableAmount('art', 13).gte(1)
+                return getBuyableAmount('art', 11).gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
-        115: {
-            name: "Inflation",
-            tooltip: "Get Art Upgrade 7.",
+        114: {
+            name: "Dimensional Sacrifice?!",
+            tooltip: "Get an Art Machine 2.",
             done() {
-                return hasUpgrade('art', 23)
+                return getBuyableAmount('art', 12).gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         121: {
-            name: "All My Progress are GONE!",
-            tooltip: "Get a Booster.",
+            name: "Restart!",
+            tooltip: "Rebirth.",
             done() {
-                return player.boo.best.gte(1)
+                return player.rein.points.gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         122: {
-            name: "Gogol is not big, bro",
+            name: "Sacrifice? No More!",
+            tooltip: "Get Reincarnation Milestone 1.",
+            done() {
+                return hasMilestone('rein', 0)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        123: {
+            name: "Gogol is not a lot",
             tooltip: "Get 1e50 Art Points.",
             done() {
                 return player.art.best.gte(1e50)
@@ -95,31 +95,21 @@ addLayer("ac", {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
-        123: {
-            name: "I Want MORE!",
-            tooltip: "Get Art Upgrade 9.",
-            done() {
-                return hasUpgrade('art', 31)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
         124: {
-            name: "Inflation-kute Gomen",
-            tooltip: "Get your Art Machine 3's base to over 4.",
+            name: "Reincarnation isn't that bad now",
+            tooltip: "Buy a Reincarnation Upgrade.",
             done() {
-                return upgradeEffect('boo', 13).gte(4)
+                return hasUpgrade('rein', 11)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         125: {
-            name: "All My Progress are not gone!",
-            tooltip: "Get Booster Milestone 3.",
+            name: "Time Dependency",
+            tooltip: "Buy Reincarnation Upgrade 2, which is based on time.",
             done() {
-                return hasMilestone('boo', 2)
+                return hasUpgrade('rein', 12)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -127,27 +117,17 @@ addLayer("ac", {
         },
         131: {
             name: "Enhance!",
-            tooltip: "Get an Enhancer.",
+            tooltip: "Gain an Enhance Point.",
             done() {
-                return player.en.best.gte(1)
+                return player.en.total.gte(1)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         132: {
-            name: "To INFINITY!",
-            tooltip: "Get 1.80e308 Skills.",
-            done() {
-                return player.points.gte('1.8e308')
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        133: {
-            name: "Enhance More!",
-            tooltip: "Get Art Enhancer 2.",
+            name: "It's not Antimatter Dimensions.",
+            tooltip: "Get Enhancer 2.",
             done() {
                 return getBuyableAmount('en', 12).gte(1)
             },
@@ -155,61 +135,31 @@ addLayer("ac", {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
-        134: {
-            name: "Enhance Swarm!!",
-            tooltip: "Get 15 total Enhancers from Art Enhancers 1 and 2.",
+        133: {
+            name: "THIS ACHIEVEMENT DOESN'T EXIST",
+            tooltip: "Get 9.99999e999 Skills. Reward: Rein. Upgrades 2 and 3 charges 10% faster.",
             done() {
-                return getBuyableAmount('en', 12).add(getBuyableAmount('en', 11)).gte(15)
+                return player.points.gte('9.99999e999')
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        134: {
+            name: "It's Inflation.",
+            tooltip: "Get 1e50 Enhance Points.",
+            done() {
+                return player.en.points.gte(1e50)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
         135: {
-            name: "I already told you, Gogol is not big, bro",
-            tooltip: "Get 1e50 Enhancers.",
+            name: "THIS ACHIEVEMENT DOESN'T EXIST 2",
+            tooltip: "Get 9.9999e9999 Art Points. Reward: Enhanced Energy Gain is raised to ^1.01.",
             done() {
-                return player.en.best.gte(1e50)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        141: {
-            name: "Strategy!",
-            tooltip: "Get any Art Capsule.",
-            done() {
-                return getBuyableAmount('c', 11).gte(1) || getBuyableAmount('c', 12).gte(1)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        142: {
-            name: "Only Child make choices!",
-            tooltip: "Get one for both Art Capsules 1 and 2.",
-            done() {
-                return getBuyableAmount('c', 11).gte(1) && getBuyableAmount('c', 12).gte(1)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        143: {
-            name: "One million is quite A LOT",
-            tooltip: "Get 1e6 Capsules.",
-            done() {
-                return player.c.total.gte(1e6)
-            },
-            onComplete() {
-                player[this.layer].points = player[this.layer].points.add(1)
-            }
-        },
-        144: {
-            name: "Heheheh ONLY CHILD MAKE CHOICES!!!",
-            tooltip: "Disable the cost multiplier for Capsules.",
-            done() {
-                return hasMilestone('c', 4)
+                return player.art.points.gte('9.9999e9999')
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
