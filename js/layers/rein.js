@@ -32,8 +32,10 @@ addLayer("rein", {
         let mult = new Decimal(1)                          // Returns your multiplier to your gain of the prestige resource.
         return mult              // Factor in any bonuses multiplying gain here.
     },
-    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
-        return new Decimal(1)
+    gainExp() {
+        let exp = new Decimal(1)
+        if (hasUpgrade('en', 14)) exp = exp.times(1.2)                             // Returns the exponent to your gain of the prestige resource.
+        return exp
     },
 
     layerShown() { return hasUpgrade('art', 22) || player[this.layer].total.gte(1) },
@@ -88,12 +90,6 @@ addLayer("rein", {
             done() { return player[this.layer].best.gte(17) },
             effectDescription: "You can buy max Reincrnations.",
         },
-        6: {
-            requirementDescription: "30 Reincarnations",
-            unlocked() { return true },
-            done() { return player[this.layer].best.gte(30) },
-            effectDescription: "Passively gain 100% of the pending Enhance Points per second.",
-        },
 
     },
     upgrades: {
@@ -134,9 +130,8 @@ addLayer("rein", {
                 let power = new Decimal(1).add(new Decimal(0.012).times(player[this.layer].resetTime).pow(0.65))
                 if (hasUpgrade('en', 11)) power = new Decimal(1).add(new Decimal(0.012).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.65))
                 if (hasAchievement('ac', 133)) power = power.times(1.1)
-                if (hasUpgrade('en', 24)) power = power.times(upgradeEffect('en', 24))
-                if (!hasUpgrade('en', 23)) if ((power.gte(5))) power = new Decimal(5)
-                if (hasUpgrade('en', 23)) if ((power.gte(upgradeEffect('en', 23)))) power = new Decimal(upgradeEffect('en', 23))
+                if (!hasUpgrade('en', 21)) if ((power.gte(5))) power = new Decimal(5)
+                if (hasUpgrade('en', 21)) if ((power.gte(upgradeEffect('en', 21)))) power = new Decimal(upgradeEffect('en', 21))
                 return power
             },
             effectDisplay() { return "^" + format(upgradeEffect(this.layer, this.id)) },

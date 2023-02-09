@@ -27,22 +27,32 @@ addLayer("en", {
         let pow = new Decimal(1)
         return new Decimal(pow)
     },
+    effect() {
+        let effect = player.en.points.pow(0.5)
+        if (hasUpgrade('en', 31)) effect = effect.pow(1.02)
+        return effect
+    },
+    effectDescription(){
+            return "boosting Enhanced Energy gain by x" + format(tmp[this.layer].effect)        
+    },
+
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         { key: "e", description: "E: Reset for Enhancers", onPress() { if (canReset(this.layer)) doReset(this.layer) } },
     ],
     canReset() {
-        return !player[this.layer].points.gte('1.79e308') && player.points.gte('1e350')
+        return !player[this.layer].points.gte(1) && player.points.gte('1e350')
     },
     energy: {
         perSecond() {
             let base = tmp.en.buyables[11].effect
+            if (getBuyableAmount('en', 11).lt(1) && player.en.total.gte(1)) base = new Decimal(1)
+            base = base.times(tmp.en.effect)
             if (player.en.energy.gte(Decimal.pow(2,1024))) base = new Decimal(0)
             return base;
         },
         effect() {
-            let pow = (player.en.energy.add(1)).pow(3.75)
-            if (hasUpgrade('en', 14)) pow = pow.pow(2)
+            let pow = (player.en.energy.add(1)).pow(7)
             return pow
         }
     },
@@ -52,11 +62,12 @@ addLayer("en", {
     },
     upgrades: {
         11: {
-            title: "Shoot Up the Sky!",
+            title: "Charge Up the Sky!",
             description: "The effect of Rein. Upgrades 2 and 3 are gained faster based on your Art Points.",
-            cost: new Decimal(1e3),
+            cost: new Decimal(1e8),
             effect() {
-                let power = new Decimal(player.art.points.add(10).log(10).div(275).add(1))
+                let power = new Decimal(player.art.points.add(10).log(10).div(440).add(1))
+                if (hasUpgrade('en', 21)) power = power.pow(1.1)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -66,10 +77,10 @@ addLayer("en", {
         },
         12: {
             title: "Enpower!",
-            description: "Gain more Enhanced Energy based on your Reincarnations.",
-            cost: new Decimal(1e4),
+            description: "Gain more Enhanced Energy based on your Art Points.",
+            cost: new Decimal(1e11),
             effect() {
-                let power = new Decimal(player.rein.points.pow(3))
+                let power = new Decimal(player.art.points.add(10).log(10).pow(0.4))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -78,47 +89,45 @@ addLayer("en", {
             },
         },
         13: {
-            title: "More Enpower!",
-            description: "Gain more Enhanced Energy based on your skills.",
-            cost: new Decimal(5e5),
-            effect() {
-                let power = new Decimal(player.points.add(10).log(10).div(25).add(1)).pow(3)
-                return power
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+            title: "Boosting to the MAX!",
+            description: "Art Point effect is +^0.06 stronger.",
+            cost: new Decimal(1e14),
             unlocked() {
                 return (true)
             },
         },
         14: {
             title: "Enhance the Enhance!",
-            description: "Enhance Energy effect is squared, and unlock Enhancer 4.",
-            cost: new Decimal(1e7),
+            description: "Reincarnation scales 20% slower, and Reincarnation effect boost Enhance Energy Gain at a massively reduced rate.",
+            effect() {
+                let power = new Decimal(tmp.rein.effect.add(10).log(10).pow(1.2))
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+            cost: new Decimal(1e21),
             unlocked() {
                 return (true)
             },
         },
         21: {
-            title: "More Enpower!",
-            description: "Enhance Points boost skill gain.",
-            cost: new Decimal(1e13),
+            title: "More Multis!",
+            description: "Increase the cap of Rein. Upgrade 3 based on AP, and 'Charge Up The Sky!' is ^1.1 stronger.",
+            cost: new Decimal(2e20),
             effect() {
-                let power = new Decimal(player.en.points.pow(6))
+                let power = new Decimal(1).add(player.art.points.add(10).log(10).div(450))
                 return power
             },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
+            effectDisplay() { return "Caps at ^" + format(upgradeEffect(this.layer, this.id)) },
             unlocked() {
                 return (true)
             },
         },
         22: {
-            title: "Passive Gain",
-            description: "Enhanced Energy gain is boosted based on the time you spent in this Reincarnation and your Art Points (The effect from time caps at ~20s).",
-            cost: new Decimal(2.5e14),
+            title: "Fame!",
+            description: "Your Achievement boost Enhanced Energy Gain.",
+            cost: new Decimal(1e60),
             effect() {
-                let power = new Decimal(player.rein.resetTime).times(10)
-                if (power.gte(400)) power = new Decimal(400)
-                power = power.times(player.art.points.add(10).log(10).div(225).add(1).pow(3))
+                let power = tmp.ac.effect.pow(4)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -127,53 +136,22 @@ addLayer("en", {
             },
         },
         23: {
-            title: "Hardcap, ANROKKU!",
-            description: "Rein. Upgrade 3's hardcap is increased based on your Enhance Points.",
-            cost: new Decimal(7e18),
+            title: "RE:Trieve!",
+            description: "Art Point gain is boosted by Enhance Points.",
+            cost: new Decimal(1e72),
             effect() {
-                let power = new Decimal(5).add(player.en.points.add(10).log(10))
+                let power = player.en.points.pow(7.8)
                 return power
             },
-            effectDisplay() { return "Caps at ^" + format(upgradeEffect(this.layer, this.id)) },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
             unlocked() {
                 return (true)
             },
         },
         24: {
-            title: "Even more ANROKKU!",
-            description: "Rein. Upgrade 3's charging speed is increased based on your Enhanced Energy, and unlock Enhancers 5-8.",
-            cost: new Decimal(1e24),
-            effect() {
-                let power = new Decimal(1).add(player.en.energy.add(10).log(10).div(3))
-                return power
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-            unlocked() {
-                return (true)
-            },
-        },
-        31: {
-            title: "Energy Rejuvenator",
-            description: "Enhance Points boost Enhanced Energy gain at a reduced rate.",
-            cost: new Decimal(1e60),
-            effect() {
-                let power = new Decimal(1).add(player.en.energy.pow(0.13))
-                power = softcap(power, new Decimal(1e10), 0.729)
-                return power
-            },
-            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-            unlocked() {
-                return (true)
-            },
-        },
-        32: {
-            title: "Overpowered",
-            description: "Add ^0.03 to the effect of Art Points.",
-            cost: new Decimal(1e180),
-            effect() {
-                let power = new Decimal(0.03)
-                return power
-            },
+            title: "Reducing to Extreme",
+            description: "All Enhancers' cost is raised to ^0.95.",
+            cost: new Decimal(1e112),
             unlocked() {
                 return (true)
             },
@@ -183,64 +161,57 @@ addLayer("en", {
         11: {
             title: "Enhancer 1",
             cost(x) {
-                let cost = new Decimal(1).times(new Decimal(100).pow(x))
-                cost = softcap(cost, new Decimal(100), new Decimal(1.01).pow(x))
+                let cost = new Decimal(10).times(new Decimal(139.1).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
             effect(x) {
-                let power = new Decimal(2).pow(x).minus(1)
+                let power = new Decimal(2).pow(x)
                 if (hasUpgrade('en', 12)) power = power.times(upgradeEffect('en', 12))
-                if (hasUpgrade('en', 13)) power = power.times(upgradeEffect('en', 13))
-                if (hasUpgrade('en', 22)) power = power.times(upgradeEffect('en', 22))
-                if (hasUpgrade('en', 31)) power = power.times(upgradeEffect('en', 31))
+                if (hasUpgrade('en', 14)) power = power.times(upgradeEffect('en', 14))
+                if (hasUpgrade('en', 22)) power = power.times(upgradeEffect('en', 14))
                 power = power.times(tmp.en.buyables[12].effect)
-                power = power.times(tmp.en.buyables[13].effect)
-                power = power.times(tmp.en.buyables[14].effect)
-                power = power.times(tmp.en.buyables[21].effect)
-                power = power.times(tmp.en.buyables[22].effect)
-                power = power.times(tmp.en.buyables[23].effect)
                 if (hasAchievement('ac', 135)) power = power.pow(1.01)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
-                let text = "Cost: " + format(data.cost) + " Enhance points\n\
+                let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Gaining " + format(buyableEffect(this.layer, this.id)) + " Enhanced Energy per second"
                 return text
             },
-            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            canAfford() { return player[this.layer].energy.gte(this.cost()) },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                player[this.layer].energy = player[this.layer].energy.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
         },
         12: {
             title: "Enhancer 2",
             cost(x) {
-                let cost = new Decimal(10).times(new Decimal(10000).pow(x))
-                cost = softcap(cost, new Decimal(100000), new Decimal(1.01).pow(x))
+                let cost = new Decimal(100).times(new Decimal(2230).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
             effect(x) {
-                let power = new Decimal(x).add(1).pow(3)
+                let power = new Decimal(2.55).pow(x)
+                if (getBuyableAmount(this.layer, this.id).gte(1)) power = power.times(new Decimal(1).add(player[this.layer].resetTime).pow(0.5))
                 power = power.times(tmp.en.buyables[13].effect)
-                power = power.times(tmp.en.buyables[14].effect)
-                power = power.times(tmp.en.buyables[21].effect)
-                power = power.times(tmp.en.buyables[22].effect)
-                power = power.times(tmp.en.buyables[23].effect)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
-                let text = "Cost: " + format(data.cost) + " Enhance points\n\
+                let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Boosting Enhancer 1's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
-            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            canAfford() { return player[this.layer].energy.gte(this.cost()) },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                player[this.layer].energy = player[this.layer].energy.sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
@@ -250,24 +221,23 @@ addLayer("en", {
         13: {
             title: "Enhancer 3",
             cost(x) {
-                let cost = new Decimal(1e8).times(new Decimal(1e6).pow(x))
-                cost = softcap(cost, new Decimal(1e14), new Decimal(1.01).pow(x))
+                let cost = new Decimal(1e4).times(new Decimal(3.9e4).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
 
             effect(x) {
-                let power = new Decimal(2).pow(x)
+                let power = new Decimal(3.1).pow(x)
+                if (getBuyableAmount(this.layer, this.id).gte(1)) power = power.times(new Decimal(1).add(player[this.layer].resetTime).pow(0.5))
                 power = power.times(tmp.en.buyables[14].effect)
-                power = power.times(tmp.en.buyables[21].effect)
-                power = power.times(tmp.en.buyables[22].effect)
-                power = power.times(tmp.en.buyables[23].effect)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
                 let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting All previous Enhancers' effect by " + format(buyableEffect(this.layer, this.id)) + "x"
+                Boosting Enhancer 2's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
             canAfford() { return player[this.layer].energy.gte(this.cost()) },
@@ -282,23 +252,22 @@ addLayer("en", {
         14: {
             title: "Enhancer 4",
             cost(x) {
-                let cost = new Decimal(1e15).times(new Decimal(1e9).pow(x))
-                cost = softcap(cost, new Decimal(1e24), new Decimal(1.01).pow(x))
+                let cost = new Decimal(1e8).times(new Decimal(7.46e5).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
 
             effect(x) {
-                let power = new Decimal(2.5).pow(x)
+                let power = new Decimal(3.65).pow(x)
                 power = power.times(tmp.en.buyables[21].effect)
-                power = power.times(tmp.en.buyables[22].effect)
-                power = power.times(tmp.en.buyables[23].effect)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
                 let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting All previous Enhancers' effect by " + format(buyableEffect(this.layer, this.id)) + "x"
+                Boosting Enhancer 3's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
             canAfford() { return player[this.layer].energy.gte(this.cost()) },
@@ -307,28 +276,28 @@ addLayer("en", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
-                return (hasUpgrade('en', 14))
+                return (getBuyableAmount('en', 13).gte(1))
             }
         },
         21: {
             title: "Enhancer 5",
             cost(x) {
-                let cost = new Decimal(1e38).times(new Decimal(1e9).pow(x))
-                cost = softcap(cost, new Decimal(1e47), new Decimal(1.01).pow(x))
+                let cost = new Decimal(1e16).times(new Decimal(1.5e7).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
 
             effect(x) {
-                let power = new Decimal(3).pow(x)
+                let power = new Decimal(4.2).pow(x)
                 power = power.times(tmp.en.buyables[22].effect)
-                power = power.times(tmp.en.buyables[23].effect)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
                 let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting All previous Enhancers' effect by " + format(buyableEffect(this.layer, this.id)) + "x"
+                Boosting Enhancer 4's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
             canAfford() { return player[this.layer].energy.gte(this.cost()) },
@@ -337,19 +306,20 @@ addLayer("en", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
-                return (hasUpgrade('en', 24))
+                return (getBuyableAmount('en', 14).gte(1))
             }
         },
         22: {
             title: "Enhancer 6",
             cost(x) {
-                let cost = new Decimal(1e100).times(new Decimal(1e35).pow(x))
-                cost = softcap(cost, new Decimal(1e135), new Decimal(1.01).pow(x))
+                let cost = new Decimal(1e24).times(new Decimal(3.19e8).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
 
             effect(x) {
-                let power = new Decimal(3.3).pow(x)
+                let power = new Decimal(4.75).pow(x)
                 power = power.times(tmp.en.buyables[23].effect)
                 return power
             },
@@ -357,7 +327,7 @@ addLayer("en", {
                 let data = tmp[this.layer].buyables[this.id]
                 let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting All previous Enhancers' effect by " + format(buyableEffect(this.layer, this.id)) + "x"
+                Boosting Enhancer 5's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
             canAfford() { return player[this.layer].energy.gte(this.cost()) },
@@ -366,26 +336,28 @@ addLayer("en", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
-                return (hasUpgrade('en', 24))
+                return (getBuyableAmount('en', 21).gte(1))
             }
         },
         23: {
             title: "Enhancer 7",
             cost(x) {
-                let cost = new Decimal(1e200).times(new Decimal(1e50).pow(x))
-                cost = softcap(cost, new Decimal(1e250), new Decimal(1.01).pow(x))
+                let cost = new Decimal(1e32).times(new Decimal(7.07e9).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
                 return cost
             },
 
             effect(x) {
-                let power = new Decimal(1.6).pow(x)
+                let power = new Decimal(5.3).pow(x)
+                power = power.times(tmp.en.buyables[24].effect)
                 return power
             },
             display() {
                 let data = tmp[this.layer].buyables[this.id]
                 let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Boosting All previous Enhancers' effect by " + format(buyableEffect(this.layer, this.id)) + "x"
+                Boosting Enhancer 6's production by " + format(buyableEffect(this.layer, this.id)) + "x"
                 return text
             },
             canAfford() { return player[this.layer].energy.gte(this.cost()) },
@@ -394,7 +366,36 @@ addLayer("en", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
-                return (hasUpgrade('en', 24))
+                return (getBuyableAmount('en', 22).gte(1))
+            }
+        },
+        24: {
+            title: "Enhancer 8",
+            cost(x) {
+                let cost = new Decimal(1e48).times(new Decimal(1.63e11).pow(x))
+                cost = softcap(cost, new Decimal(1e100), 1.2)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                return cost
+            },
+
+            effect(x) {
+                let power = new Decimal(5.85).pow(x)
+                return power
+            },
+            display() {
+                let data = tmp[this.layer].buyables[this.id]
+                let text = "Cost: " + format(data.cost) + " Enhanced Energy\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Boosting Enhancer 7's production by " + format(buyableEffect(this.layer, this.id)) + "x"
+                return text
+            },
+            canAfford() { return player[this.layer].energy.gte(this.cost()) },
+            buy() {
+                player[this.layer].energy = player[this.layer].energy.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return (getBuyableAmount('en', 23).gte(1))
             }
         },
 
@@ -409,6 +410,10 @@ addLayer("en", {
                 "prestige-button",
                 ['display-text', function() { return `You have ${format(player.en.energy)} Enhanced Energy,\n\ boosting Art Machines 1-3's effect by ${format(tmp.en.energy.effect)}x` }, { 'font-size': '21.6px', 'color': 'silver' }],
                 ['display-text', function() { return `You are gaining ${format(tmp.en.energy.perSecond)} Enhanced Energy per second` }, { 'font-size': '14.4px', 'color': 'silver' }],
+                ['display-text', function() { return `Enhanced Energy effect for #2 - #3 increases with time based on time spent in this Enhance. Currently: ${format(new Decimal(1).add(player[this.layer].resetTime).pow(0.5))}x. They will only work on individual Enhancers once you have one of them.`}, { 'font-size': '14.4px', 'color': 'silver' }],
+                ['display-text', function() { return `When bought, each of the Enhancers have different multipliers. It's formula is (2+0.55*#(n-1)). After 1e100 and 1.8e308, the scaling of all Enhancers rises.` }, { 'font-size': '14.4px', 'color': 'silver' }],
+                ['display-text', function() { return `You Automatically gain 10% of the Enhance point every second, once you've got the first point. You can only Enhance manually once. By the way, this section is very slow, so be prepared!` }, { 'font-size': '14.4px', 'color': 'silver' }],
+
                 "buyables"
             ],
         },
@@ -424,7 +429,7 @@ addLayer("en", {
     automate() {
     },
     passiveGeneration() {
-        return hasMilestone('rein', 6)? 1:0
+        return player.en.points.gte(1)? 0.1:0
     },
 
 
