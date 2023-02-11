@@ -156,6 +156,16 @@ addLayer("ac", {
             }
         },
         135: {
+            name: "Suited Up",
+            tooltip: "Get an Enhance Upgrade. Reward: Gain 2x more Enhanced Energy.",
+            done() {
+                return hasUpgrade('en', 11)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        145: {
             name: "THIS ACHIEVEMENT DOESN'T EXIST 2",
             tooltip: "Get 9.9999e9999 Art Points. Reward: Enhanced Energy Gain is raised to ^1.01.",
             done() {

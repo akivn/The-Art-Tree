@@ -96,7 +96,7 @@ addLayer("art", {
             cost: new Decimal(1e11),
             effect() {
                 let power = new Decimal(0.5).add((getBuyableAmount(this.layer, 12).add(1.4).log(1.4)).times(0.02))
-                if (hasUpgrade('en', 13)) power = power.add(0.06)
+                if (hasUpgrade('en', 13)) power = power.add(0.08)
                 if (power.gte(0.9)) power = new Decimal(0.9)
                 return power
             },

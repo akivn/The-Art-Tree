@@ -111,8 +111,8 @@ addLayer("rein", {
             description: "The base of Art Machine 2 is exponentially stronger over time based on your time spent on this Reincarnation (capped at 200).",
             cost: new Decimal(10),
             effect() {
-                let power = new Decimal(4).add(new Decimal(8).times(player[this.layer].resetTime).pow(0.612))
-                if (hasUpgrade('en', 11)) power = new Decimal(4).add(new Decimal(8).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.612))
+                let power = new Decimal(4).add(new Decimal(15).times(player[this.layer].resetTime).pow(0.612))
+                if (hasUpgrade('en', 11)) power = new Decimal(4).add(new Decimal(15).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.612))
                 if (hasAchievement('ac', 133)) power = power.times(1.1)
                 if (power.gte(200)) power = new Decimal(200)
                 return power
@@ -127,9 +127,10 @@ addLayer("rein", {
             description: "Art Machine 3 is exponentially stronger over time based on your time spent on this Reincarnation (capped at ^5).",
             cost: new Decimal(12),
             effect() {
-                let power = new Decimal(1).add(new Decimal(0.012).times(player[this.layer].resetTime).pow(0.65))
-                if (hasUpgrade('en', 11)) power = new Decimal(1).add(new Decimal(0.012).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.65))
+                let power = new Decimal(1).add(new Decimal(0.02).times(player[this.layer].resetTime).pow(0.65))
+                if (hasUpgrade('en', 11)) power = new Decimal(1).add(new Decimal(0.02).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.65))
                 if (hasAchievement('ac', 133)) power = power.times(1.1)
+                if (hasUpgrade('en', 24)) power = power.times(5)
                 if (!hasUpgrade('en', 21)) if ((power.gte(5))) power = new Decimal(5)
                 if (hasUpgrade('en', 21)) if ((power.gte(upgradeEffect('en', 21)))) power = new Decimal(upgradeEffect('en', 21))
                 return power

@@ -28,8 +28,7 @@ addLayer("en", {
         return new Decimal(pow)
     },
     effect() {
-        let effect = player.en.points.pow(0.5)
-        if (hasUpgrade('en', 31)) effect = effect.pow(1.02)
+        let effect = player.en.points.pow(0.475)
         return effect
     },
     effectDescription(){
@@ -64,7 +63,7 @@ addLayer("en", {
         11: {
             title: "Charge Up the Sky!",
             description: "The effect of Rein. Upgrades 2 and 3 are gained faster based on your Art Points.",
-            cost: new Decimal(1e8),
+            cost: new Decimal(1e7),
             effect() {
                 let power = new Decimal(player.art.points.add(10).log(10).div(440).add(1))
                 if (hasUpgrade('en', 21)) power = power.pow(1.1)
@@ -78,9 +77,9 @@ addLayer("en", {
         12: {
             title: "Enpower!",
             description: "Gain more Enhanced Energy based on your Art Points.",
-            cost: new Decimal(1e11),
+            cost: new Decimal(1e10),
             effect() {
-                let power = new Decimal(player.art.points.add(10).log(10).pow(0.4))
+                let power = new Decimal(player.art.points.add(10).log(10).pow(0.85))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -90,8 +89,8 @@ addLayer("en", {
         },
         13: {
             title: "Boosting to the MAX!",
-            description: "Art Point effect is +^0.06 stronger.",
-            cost: new Decimal(1e14),
+            description: "Art Point effect is +^0.08 stronger (added to Art Upgrade 5's effect).",
+            cost: new Decimal(1e16),
             unlocked() {
                 return (true)
             },
@@ -100,11 +99,11 @@ addLayer("en", {
             title: "Enhance the Enhance!",
             description: "Reincarnation scales 20% slower, and Reincarnation effect boost Enhance Energy Gain at a massively reduced rate.",
             effect() {
-                let power = new Decimal(tmp.rein.effect.add(10).log(10).pow(1.2))
+                let power = new Decimal(tmp.rein.effect.pow(0.0525))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
-            cost: new Decimal(1e21),
+            cost: new Decimal(1e22),
             unlocked() {
                 return (true)
             },
@@ -112,7 +111,7 @@ addLayer("en", {
         21: {
             title: "More Multis!",
             description: "Increase the cap of Rein. Upgrade 3 based on AP, and 'Charge Up The Sky!' is ^1.1 stronger.",
-            cost: new Decimal(2e20),
+            cost: new Decimal(1e40),
             effect() {
                 let power = new Decimal(1).add(player.art.points.add(10).log(10).div(450))
                 return power
@@ -138,9 +137,9 @@ addLayer("en", {
         23: {
             title: "RE:Trieve!",
             description: "Art Point gain is boosted by Enhance Points.",
-            cost: new Decimal(1e72),
+            cost: new Decimal(7.77e77),
             effect() {
-                let power = player.en.points.pow(7.8)
+                let power = player.en.points.pow(4)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" },
@@ -150,8 +149,8 @@ addLayer("en", {
         },
         24: {
             title: "Reducing to Extreme",
-            description: "All Enhancers' cost is raised to ^0.95.",
-            cost: new Decimal(1e112),
+            description: "All Enhancers' cost are 3% lower logarithmically, and Rein. Upgrade 3 charges 5x faster.",
+            cost: new Decimal(1e102),
             unlocked() {
                 return (true)
             },
@@ -162,8 +161,8 @@ addLayer("en", {
             title: "Enhancer 1",
             cost(x) {
                 let cost = new Decimal(10).times(new Decimal(139.1).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
             effect(x) {
@@ -171,8 +170,9 @@ addLayer("en", {
                 if (hasUpgrade('en', 12)) power = power.times(upgradeEffect('en', 12))
                 if (hasUpgrade('en', 14)) power = power.times(upgradeEffect('en', 14))
                 if (hasUpgrade('en', 22)) power = power.times(upgradeEffect('en', 14))
+                if (hasAchievement('ac', 135)) power = power.times(2)
                 power = power.times(tmp.en.buyables[12].effect)
-                if (hasAchievement('ac', 135)) power = power.pow(1.01)
+                if (hasAchievement('ac', 145)) power = power.pow(1.01)
                 return power
             },
             display() {
@@ -192,8 +192,8 @@ addLayer("en", {
             title: "Enhancer 2",
             cost(x) {
                 let cost = new Decimal(100).times(new Decimal(2230).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
             effect(x) {
@@ -222,8 +222,8 @@ addLayer("en", {
             title: "Enhancer 3",
             cost(x) {
                 let cost = new Decimal(1e4).times(new Decimal(3.9e4).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
@@ -253,8 +253,8 @@ addLayer("en", {
             title: "Enhancer 4",
             cost(x) {
                 let cost = new Decimal(1e8).times(new Decimal(7.46e5).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
@@ -283,8 +283,8 @@ addLayer("en", {
             title: "Enhancer 5",
             cost(x) {
                 let cost = new Decimal(1e16).times(new Decimal(1.5e7).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
@@ -313,8 +313,8 @@ addLayer("en", {
             title: "Enhancer 6",
             cost(x) {
                 let cost = new Decimal(1e24).times(new Decimal(3.19e8).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
@@ -343,8 +343,8 @@ addLayer("en", {
             title: "Enhancer 7",
             cost(x) {
                 let cost = new Decimal(1e32).times(new Decimal(7.07e9).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
@@ -373,8 +373,8 @@ addLayer("en", {
             title: "Enhancer 8",
             cost(x) {
                 let cost = new Decimal(1e48).times(new Decimal(1.63e11).pow(x))
-                cost = softcap(cost, new Decimal(1e100), 1.2)
-                if (hasUpgrade('en', 24)) cost = cost.pow(0.95)
+                cost = softcap(cost, new Decimal(1e100), 1.17)
+                if (hasUpgrade('en', 24)) cost = cost.pow(0.97)
                 return cost
             },
 
