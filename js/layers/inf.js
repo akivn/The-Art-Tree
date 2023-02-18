@@ -301,7 +301,7 @@ addLayer("inf", {
     },
     clickables: {
     },
-    layerShown() { return true },
+    layerShown() { return player.en.energy.gte(new Decimal(2).pow(1024)) || player[this.layer].total.gte(1) },
     tabFormat: {
         "Upgrades": {
             content: [
