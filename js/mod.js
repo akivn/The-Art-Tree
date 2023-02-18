@@ -3,7 +3,7 @@ let modInfo = {
 	id: "ormc2",
 	author: "akivn, the President of Origin Railway",
 	pointsName: "Skill",
-	modFiles: ["layers/art.js", "layers/achievement.js", "tree.js", "layers/rein.js", "layers/en.js"],
+	modFiles: ["layers/art.js", "layers/achievement.js", "tree.js", "layers/rein.js", "layers/en.js", "layers/inf.js"],
 
 	discordName: "neuro sama your reality (X)",
 	discordLink: "https://discord.gg/h6TFgujqtN",
@@ -49,6 +49,7 @@ function getPointGen() {
 	gain = gain.times(tmp.art.buyables[11].effect)
 	if (hasUpgrade('art', 11)) gain = gain.times(2)
 	if (hasUpgrade('art', 13)) gain = gain.times(upgradeEffect('art', 13))
+	if (hasAchievement('ac', 141)) gain = gain.times(5)
 	return gain
 }
 

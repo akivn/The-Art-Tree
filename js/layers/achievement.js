@@ -165,6 +165,26 @@ addLayer("ac", {
                 player[this.layer].points = player[this.layer].points.add(1)
             }
         },
+        141: {
+            name: "To Infinity!",
+            tooltip: "Infinity once. Reward: Gain 5x more Skill.",
+            done() {
+                return player.inf.points.gte(1)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        142: {
+            name: "It's not Infinity, is it?",
+            tooltip: "Get 1.8e308 Enhaance Points.",
+            done() {
+                return player.en.points.gte("1.8e308")
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
         145: {
             name: "THIS ACHIEVEMENT DOESN'T EXIST 2",
             tooltip: "Get 9.9999e9999 Art Points. Reward: Enhanced Energy Gain is raised to ^1.01.",

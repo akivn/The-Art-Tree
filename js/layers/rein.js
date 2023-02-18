@@ -2,7 +2,7 @@ addLayer("rein", {
     startData() {
         return {                  // startData is a function that returns default data for a layer. 
             unlocked: false,                     // You can add more variables here to add them to your layer.
-            points: new Decimal(0),          // "points" is the internal name for the main resource of the layer.
+            points: new Decimal(0),         // "points" is the internal name for the main resource of the layer.
         }
     },
     name: "Reincarnation",
@@ -34,16 +34,20 @@ addLayer("rein", {
     },
     gainExp() {
         let exp = new Decimal(1)
-        if (hasUpgrade('en', 14)) exp = exp.times(1.2)                             // Returns the exponent to your gain of the prestige resource.
+        if (hasUpgrade('en', 14)) exp = exp.times(1.2)
+        if (hasUpgrade('inf', 22)) exp = exp.times(new Decimal(1).div(upgradeEffect('inf', 22)))
+        if (hasUpgrade('inf', 42)) exp = exp.times(new Decimal(1).div(upgradeEffect('inf', 42)))                             // Returns the exponent to your gain of the prestige resource.
         return exp
     },
 
-    layerShown() { return hasUpgrade('art', 22) || player[this.layer].total.gte(1) },
+    layerShown() { return hasUpgrade('art', 22) || player[this.layer].total.gte(1) || player.inf.total.gte(1) },
     passiveGeneration() {
     },
     effect() {
         let effect = new Decimal(3).pow(player[this.layer].points)
         if (hasUpgrade('rein', 11)) effect = (new Decimal(3).add(upgradeEffect('rein', 11))).pow(player[this.layer].points)
+        if (hasUpgrade('inf', 12)) effect = effect.pow(2)
+        effect = softcap(effect, new Decimal('1.8e308'), new Decimal(1).div(effect.add(10).log(10).div(308).pow(0.7)))
         return effect
     },
     effectDescription() {
@@ -90,6 +94,12 @@ addLayer("rein", {
             done() { return player[this.layer].best.gte(17) },
             effectDescription: "You can buy max Reincrnations.",
         },
+        6: {
+            requirementDescription: "10,000 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(1e4) },
+            effectDescription: "Reincarnation reset nothing.",
+        },
 
     },
     upgrades: {
@@ -131,6 +141,7 @@ addLayer("rein", {
                 if (hasUpgrade('en', 11)) power = new Decimal(1).add(new Decimal(0.02).times(upgradeEffect('en', 11)).times(player[this.layer].resetTime).pow(0.65))
                 if (hasAchievement('ac', 133)) power = power.times(1.1)
                 if (hasUpgrade('en', 24)) power = power.times(5)
+                if (hasUpgrade('inf', 32)) power = power.times(upgradeEffect('inf', 32))
                 if (!hasUpgrade('en', 21)) if ((power.gte(5))) power = new Decimal(5)
                 if (hasUpgrade('en', 21)) if ((power.gte(upgradeEffect('en', 21)))) power = new Decimal(upgradeEffect('en', 21))
                 return power
@@ -151,10 +162,16 @@ addLayer("rein", {
     },
     doReset(resettingLayer) {
         let keep = []
+        if (hasUpgrade('inf', 14)) keep.push("milestones")
+        if (hasUpgrade('inf', 14)) keep.push("upgrades")
         if (layers[resettingLayer].row > this.row) layerDataReset("rein", keep)
+    },
+    autoPrestige(){
+        return (hasUpgrade('inf', 34))
     },
     canBuyMax(){
         return (hasMilestone('rein', 5))
-    }
+    },
+    resetsNothing () {return (hasMilestone('rein', 6))}
 
 })

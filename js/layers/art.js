@@ -26,6 +26,7 @@ addLayer("art", {
         mult = mult.times(tmp.art.buyables[12].effect)
         if (hasUpgrade('art', 12)) mult = mult.times(upgradeEffect('art', 12))
         if (hasUpgrade('en', 23)) mult = mult.times(upgradeEffect('en', 23))
+        if (hasUpgrade('inf', 31)) mult = mult.times(upgradeEffect('inf', 31))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -142,6 +143,7 @@ addLayer("art", {
             cost(x) {
                 let cost = new Decimal(500).times(new Decimal(2).pow(x))
                 cost = softcap(cost, new Decimal(1000), new Decimal(1.01).pow(x))
+                if (hasUpgrade('inf', 11)) cost = cost.pow(0.7)
                 return cost
             },
             effect(x) {
@@ -176,6 +178,7 @@ addLayer("art", {
                 if (hasUpgrade('rein', 12)) power = upgradeEffect('rein', 12).pow(x)
                 power = power.times(tmp.art.buyables[13].effect)
                 power = power.times(tmp.en.energy.effect)
+                if (hasUpgrade('inf', 21)) power = power.pow(upgradeEffect('inf', 21))
                 return power
             },
             display() {
@@ -273,9 +276,6 @@ addLayer("art", {
         if (hasMilestone('rein', 1)) keep.push("buyables")
         if (layers[resettingLayer].row > this.row) layerDataReset("art", keep)
     },
-    resetsNothing() {
-
-    }
 
 })
 
