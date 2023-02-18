@@ -13,16 +13,18 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "RW2-B0.1",
+	num: "RW2-0.1",
 	name: "A new beginning.",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>vB0.1</h3><br>
-		- Added Infinity!<br>
-		- `
+		- Added Enhance!<br>
+		- Use the Enhance points to buy new upgrades, and auto-generated Energy for the Enhancers!<br>
+		- Enhanced Energy boosts Art Machine's effect by a lot!<br>
+		- Endgame raised to ~e10.5k Skill, or infinite Enhanced Energy.`
 
-let winText = `Congratulations! You have became the new King of Art and beaten this game, but for now...`
+let winText = `Congratulations! You have Collapsed the world with infinite amount of art and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)

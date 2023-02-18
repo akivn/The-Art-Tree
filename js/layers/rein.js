@@ -35,6 +35,7 @@ addLayer("rein", {
     gainExp() {
         let exp = new Decimal(1)
         if (hasUpgrade('en', 14)) exp = exp.times(1.2)
+        if (hasUpgrade('en', 32)) exp = exp.times(upgradeEffect('en', 32))
         if (hasUpgrade('inf', 22)) exp = exp.times(new Decimal(1).div(upgradeEffect('inf', 22)))
         if (hasUpgrade('inf', 42)) exp = exp.times(new Decimal(1).div(upgradeEffect('inf', 42)))                             // Returns the exponent to your gain of the prestige resource.
         return exp

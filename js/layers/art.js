@@ -97,7 +97,7 @@ addLayer("art", {
             cost: new Decimal(1e11),
             effect() {
                 let power = new Decimal(0.5).add((getBuyableAmount(this.layer, 12).add(1.4).log(1.4)).times(0.02))
-                if (hasUpgrade('en', 13)) power = power.add(0.08)
+                if (hasUpgrade('en', 13)) power = power.add(0.065)
                 if (power.gte(0.9)) power = new Decimal(0.9)
                 return power
             },
@@ -218,7 +218,7 @@ addLayer("art", {
                 let text = "Cost: " + format(data.cost) + " Art machine 2s\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Boosting The Previous Upgrades gain by x" + format(buyableEffect(this.layer, this.id))
-                if (hasMilestone('rein', 0)) text = "Requires: " + format(data.cost) + " Art machine 1s\n\
+                if (hasMilestone('rein', 0)) text = "Requires: " + format(data.cost) + " Art machine 2s\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Boosting The Previous Upgrades by x" + format(buyableEffect(this.layer, this.id))
                 return text
