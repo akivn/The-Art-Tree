@@ -216,8 +216,13 @@ addLayer("ac", {
             }
         },
         142: {
+<<<<<<< Updated upstream
             name: "Get rid of all gods",
             tooltip: "Reach 1e480 Skill and Art Points in Hinamori Amu Challenge.\n\ Reward: Infinite Generator 1 is 50% stronger.",
+=======
+            name: "It's not Infinity, is it?",
+            tooltip: "Get 1.8e308 Enhance Points. Reward: Keep Enhance Upgrades on Infinity, and start with 1 Enhance Point on the start of each Infinity.",
+>>>>>>> Stashed changes
             done() {
                 return player.points.gte('1e480') && player.art.points.gte('1e480') && inChallenge('chal', 31)
             },
@@ -228,6 +233,16 @@ addLayer("ac", {
                 let effect = new Decimal(0.5)
                 return effect
             },
+        },
+        143: {
+            name: "Skip it! My Rhythm!",
+            tooltip: "Reach Infinite Enhance Energy without any Reincarnations.",
+            done() {
+                return player.en.energy.gte(Decimal.pow(2, 1024)) && player.rein.points.eq(0)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
         },
         145: {
             name: "Denying everything",

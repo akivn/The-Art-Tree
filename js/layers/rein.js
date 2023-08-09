@@ -52,7 +52,60 @@ addLayer("rein", {
     effectDescription(){
         return "boosting skill and Art point gain by x" + format(tmp[this.layer].effect)        
     },
+<<<<<<< Updated upstream
     upgrades:{
+=======
+    milestones: {
+        0: {
+            requirementDescription: "5 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(5) },
+            effectDescription: "Art Machines that cost previous Art Machines no longer resets the previous Art Machines,\n\ and unlock 2 new Art Upgrades.",
+        },
+        1: {
+            requirementDescription: "7 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(7) },
+            effectDescription: "Reincarnation no longer resets your upgrades and Art Machines.",
+        },
+        2: {
+            requirementDescription: "8 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(8) },
+            effectDescription: "Unlock 4 new Reincarnation Upgrades.",
+        },
+        3: {
+            requirementDescription: "10 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(10) },
+            effectDescription: "Passively gain 100% of the pending Art Points per second.",
+        },
+        4: {
+            requirementDescription: "12 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(12) },
+            effectDescription: "Get an autobuyer for Art Machines 1, 2 and 3.",
+            toggles: [
+                ["art", "auto"]
+            ],
+
+        },
+        5: {
+            requirementDescription: "17 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(17) },
+            effectDescription: "You can buy max Reincrnations.",
+        },
+        6: {
+            requirementDescription: "100 Reincarnations",
+            unlocked() { return true },
+            done() { return player[this.layer].best.gte(100) },
+            effectDescription: "Reincarnation reset nothing.",
+        },
+
+    },
+    upgrades: {
+>>>>>>> Stashed changes
         11: {
             title: "Self-Reproduction",
             description: "Infinite Generator 1's production boost itself.",

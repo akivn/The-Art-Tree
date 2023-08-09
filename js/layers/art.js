@@ -20,7 +20,13 @@ addLayer("art", {
     baseResource: "points", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+<<<<<<< Updated upstream
     exponent: 0.42, // Prestige currency exponent
+=======
+    exponent: 0.5, // Prestige currency exponent
+    softcap: new Decimal('1e100000'),
+    softcapPower: 0.3,
+>>>>>>> Stashed changes
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         mult = mult.times(tmp.rein.effect)
